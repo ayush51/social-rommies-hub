@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { ChessSummary } from "@/components/chess-summary";
+import { PetsSummary } from "@/components/pets-summary";
 import { Avatar } from "@/components/avatar";
 import { SeenAt } from "@/components/relative-time";
 import { PastQuestions } from "@/components/past-questions";
@@ -85,6 +88,10 @@ export default async function HomePage() {
         <span className="font-semibold">Predictions</span>
         <span className="text-sm text-neutral-500">{openMarkets ? `${openMarkets} open` : "Start one"}</span>
       </Link>
+      <div className="mt-3 space-y-3">
+        <Suspense fallback={null}><PetsSummary /></Suspense>
+        <Suspense fallback={null}><ChessSummary /></Suspense>
+      </div>
       <RallyPanel />
       <section className="mt-6 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
         <div className="flex items-baseline justify-between">

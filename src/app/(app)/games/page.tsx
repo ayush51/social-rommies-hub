@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { ChessSummary } from "@/components/chess-summary";
 import { Coins } from "lucide-react";
 import type { CardHistory } from "@/lib/cards";
 import { getMe } from "@/lib/session";
@@ -23,6 +25,7 @@ export default async function GamesPage() {
         <span className="font-semibold">Abingdon Street</span>
         <span className="text-sm text-neutral-500">Monopoly with a bingdon pot</span>
       </Link>
+      <Suspense fallback={null}><ChessSummary /></Suspense>
       <Link href="/predictions" className="mt-3 flex items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
         <span className="font-semibold">Predictions</span>
         <span className="text-sm text-neutral-500">Bet bingdons on what happens</span>
@@ -62,8 +65,6 @@ export default async function GamesPage() {
         ))}
       </div>
 
-      <h2 className="mt-8 font-semibold">Coming soon</h2>
-      <p className="mt-1 text-sm text-neutral-500">Chess.</p>
     </>
   );
 }

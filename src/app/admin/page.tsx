@@ -15,6 +15,7 @@ export default async function AdminHome() {
     <>
       <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
       <div className="mt-4 space-y-3">
+        <Link href="/admin/pets" className={card}><span className="font-semibold">Pets</span><span className="text-sm text-neutral-500">Add and edit the house pets</span></Link>
         <Link href="/admin/roommates" className={card}><span className="font-semibold">People</span><span className="text-sm text-neutral-500">Roles, codes, add a roommate</span></Link>
         <Link href="/admin/settings" className={card}><span className="font-semibold">Settings</span><span className="text-sm text-neutral-500">Timezone, rewards</span></Link>
         <Link href="/admin/moderation" className={card}><span className="font-semibold">Moderate</span><span className="text-sm text-neutral-500">Chat, photos, comments</span></Link>

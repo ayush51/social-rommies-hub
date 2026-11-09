@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="-mr-2 flex gap-1 overflow-x-auto text-sm [&_a]:flex [&_a]:min-h-11 [&_a]:shrink-0 [&_a]:items-center [&_a]:px-2">
           <Link href="/admin/features">Features</Link>
           <Link href="/admin/questions">Questions</Link>
+          <Link href="/admin/pets">Pets</Link>
           <Link href="/admin/roommates">People</Link>
           <Link href="/admin/settings">Settings</Link>
           <Link href="/admin/moderation">Moderate</Link>

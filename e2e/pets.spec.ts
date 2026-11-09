@@ -44,6 +44,8 @@ async function cleanup(prefix: string) {
 }
 
 test("pets: admin adds a pet, a member feeds it, daily cap, cleanup", async ({ page, context }, info) => {
+  // stateful (adds a pet, feeds it to the daily cap): one device runs it; page layouts are audited for every device in ui.spec.ts
+  test.skip(info.project.name !== "iphone-portrait", "shared account and pet");
   const project = info.project.name;
   const name = `E2E Pet ${project}`;
   await cleanup(name);

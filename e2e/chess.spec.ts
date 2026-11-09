@@ -92,7 +92,8 @@ test("chess game: board audit and play e4", async ({ browser, page, context }, i
     await page.screenshot({ path: `e2e/screens/${info.project.name}/chess_game.png` });
     await check(page, info.project.name, "/games/chess/[id]", problems);
 
-    if (info.project.name !== "iphone-portrait") return;
+    // playing a move sends a real push to the opponent, so it only runs when explicitly allowed (E2E_ALLOW_PUSH=1)
+    if (info.project.name !== "iphone-portrait" || !process.env.E2E_ALLOW_PUSH) return;
 
     // tap e2 -> destinations shown -> tap e4
     await page.getByRole("button", { name: "e2, white pawn" }).click();
