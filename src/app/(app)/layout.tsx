@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { LocationIndicator } from "@/components/location-indicator";
 import { ErrorReporter } from "@/components/error-reporter";
 import { NotificationBell } from "@/components/notification-bell";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { Presence } from "@/components/presence";
 import { BottomNav } from "@/components/bottom-nav";
 import { getMe } from "@/lib/session";
@@ -24,7 +25,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <header className="mb-2 flex justify-end">
         <NotificationBell />
       </header>
-      <Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
+      <Suspense fallback={<PageSkeleton />}>
         <MembershipGate>{children}</MembershipGate>
       </Suspense>
       <Suspense fallback={null}>

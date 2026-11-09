@@ -91,6 +91,31 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, householdId, peerId, userId]);
 
+  // Re-sync with the database on open and when the app returns to the foreground: the initial props may come from the
+  // client page cache, and realtime only delivers what happens while this room is mounted.
+  useEffect(() => {
+    let cancelled = false;
+    const sync = async () => {
+      const base = supabase.from("messages").select(COLS);
+      const { data } = await (peerId
+        ? base.or(`and(user_id.eq.${userId},recipient_id.eq.${peerId}),and(user_id.eq.${peerId},recipient_id.eq.${userId})`)
+        : base.is("recipient_id", null)
+      ).order("created_at", { ascending: false }).limit(50);
+      if (cancelled || !data) return;
+      setMessages((cur) => {
+        const byId = new Map(cur.map((m) => [m.id, m]));
+        data.forEach((m) => byId.set(m.id, m as Msg));
+        return [...byId.values()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+      });
+      const { data: rx } = await supabase.from("message_reactions").select("message_id, user_id, emoji").in("message_id", data.map((m) => m.id));
+      if (!cancelled && rx) setReactions((cur) => [...cur.filter((r) => !rx.some((x) => x.message_id === r.message_id)), ...rx]);
+    };
+    void sync();
+    const onVisible = () => document.visibilityState === "visible" && void sync();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { cancelled = true; document.removeEventListener("visibilitychange", onVisible); };
+  }, [supabase, peerId, userId]);
+
   // sign photos that arrive after the first render
   useEffect(() => {
     const missing = [...new Set(messages.map((m) => m.image_path).filter((p): p is string => !!p && !urls[p]))];

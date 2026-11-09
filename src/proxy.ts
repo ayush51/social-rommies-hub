@@ -20,10 +20,10 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // Refreshes the session cookie; authorization is still enforced by RLS and server checks.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Refreshes the session cookie and verifies the signed token locally (no auth-server round trip on every request);
+  // authorization is still enforced by RLS and server checks.
+  const { data: auth } = await supabase.auth.getClaims();
+  const user = auth?.claims.sub ? { id: auth.claims.sub } : null;
 
   // Admin area: answer 404 for non-admins before anything renders (pages also re-check on the server).
   if (user && request.nextUrl.pathname.startsWith("/admin")) {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { requireAdmin } from "@/lib/admin";
 
 // Server-side gate: non-admins get a 404 for every /admin URL, whatever the UI shows.
@@ -24,7 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/" className="font-semibold underline">Exit</Link>
         </nav>
       </header>
-      <Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
+      <Suspense fallback={<PageSkeleton />}>
         <AdminGate>{children}</AdminGate>
       </Suspense>
     </div>
