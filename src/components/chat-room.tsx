@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Send, Trash2 } from "lucide-react";
+import { notify } from "@/app/(app)/push-actions";
 import { createClient } from "@/lib/supabase/client";
 
 export type Msg = { id: string; user_id: string; body: string; created_at: string };
@@ -19,7 +20,7 @@ type Props = {
 };
 
 export function ChatRoom({ householdId, userId, isAdmin, names, initialMessages, initialReactions }: Props) {
-  const supabase = useRef(createClient()).current;
+  const [supabase] = useState(() => createClient());
   const [messages, setMessages] = useState(initialMessages);
   const [reactions, setReactions] = useState(initialReactions);
   const [draft, setDraft] = useState("");
@@ -71,6 +72,7 @@ export function ChatRoom({ householdId, userId, isAdmin, names, initialMessages,
     } else {
       setError(undefined);
       setMessages((cur) => (cur.some((x) => x.id === data.id) ? cur : [...cur, data]));
+      void notify("message", data.id);
     }
   }
 

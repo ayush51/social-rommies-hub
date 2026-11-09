@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { LiveRefresh } from "@/components/live-refresh";
 import { LocalTime } from "@/components/local-time";
+import { nowMs } from "@/lib/time";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,7 +13,7 @@ export default async function PlansPage() {
     supabase.from("plans").select("id, title, location, starts_at, status").order("starts_at"),
     supabase.from("plan_rsvps").select("plan_id, user_id, response"),
   ]);
-  const cutoff = Date.now() - 3 * 3600_000;
+  const cutoff = nowMs() - 3 * 3600_000;
   const upcoming = (plans ?? []).filter((p) => new Date(p.starts_at).getTime() >= cutoff);
   const past = (plans ?? []).filter((p) => new Date(p.starts_at).getTime() < cutoff).reverse();
 

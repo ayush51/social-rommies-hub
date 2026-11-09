@@ -4,7 +4,7 @@ Each phase is independently testable and ships only the tables it needs.
 
 - [ ] **0. Docs** — ARCHITECTURE.md, TASKS.md
 - [x] **1. Foundation** — Next.js app, hosted Supabase, PIN login for six roommates, households / profiles / members / invites, RLS + tests, app shell + bottom nav, seed, README
-- [~] **2. Home, status, chat** — done: statuses (expiry), realtime chat (reactions, delete, rate limit). rally (post to chat + one-tap join). Todo: chat photos, notifications
+- [~] **2. Home, status, chat** — done: statuses (expiry), realtime chat (reactions, delete, rate limit). rally (post to chat + one-tap join). Todo: chat photos. Push: messages, rallies, plans, daily photos (bell top right)
 - [~] **3. Economy (Abby Coins)** — done: wallets, append-only ledger, welcome bonus, daily reward, photo tips, history, leaderboard, tests. Todo: game/poll rewards, purchases, admin reward config
 - [~] **4. Daily photos** — done: camera/library capture, selfie, private storage + signed URLs, reactions/comments, RLS expiry, Memories archive (no cron needed). tips
 - [~] **5. Plans** — done: create/edit, cancel/restore, in/maybe/out RSVPs, participant lists, comments, Home "Coming up". Todo: reminders (needs notifications)

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { NotificationBell } from "@/components/notification-bell";
 import { Presence } from "@/components/presence";
 import { BottomNav } from "@/components/bottom-nav";
 import { getMe } from "@/lib/session";
@@ -15,7 +16,10 @@ async function MembershipGate({ children }: { children: React.ReactNode }) {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-6">
+    <div className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-3">
+      <header className="mb-2 flex justify-end">
+        <NotificationBell />
+      </header>
       <Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
         <MembershipGate>{children}</MembershipGate>
       </Suspense>

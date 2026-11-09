@@ -587,6 +587,66 @@ export type Database = {
         }
         Relationships: []
       }
+      push_log: {
+        Row: {
+          created_at: string
+          ref: string
+        }
+        Insert: {
+          created_at?: string
+          ref: string
+        }
+        Update: {
+          created_at?: string
+          ref?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          household_id: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          household_id: string
+          id?: string
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          household_id?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       statuses: {
         Row: {
           expires_at: string | null
@@ -679,6 +739,10 @@ export type Database = {
         Args: { p_household: string; p_max_uses?: number }
         Returns: string
       }
+      drop_subscriptions: {
+        Args: { p_endpoints: string[] }
+        Returns: undefined
+      }
       ensure_wallet: {
         Args: { p_hid: string; p_user: string }
         Returns: undefined
@@ -718,7 +782,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      push_targets: {
+        Args: { p_kind: string; p_ref: string }
+        Returns: {
+          auth: string
+          body: string
+          endpoint: string
+          p256dh: string
+          title: string
+          url: string
+        }[]
+      }
       redeem_invite: { Args: { p_code: string }; Returns: string }
+      save_subscription: {
+        Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
       tip_post: {
         Args: { p_amount: number; p_key: string; p_post: string }
         Returns: undefined

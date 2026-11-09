@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { sendPush } from "@/lib/push";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,12 +37,18 @@ export async function rallyHouse(input: z.input<typeof rallySchema>): Promise<{ 
   if (!parsed.success) return { error: "Pick or type an activity." };
   const me = await getMe();
   const supabase = await createClient();
-  const { error } = await supabase.from("messages").insert({
-    household_id: me.householdId,
-    user_id: me.userId,
-    body: `${me.displayName} is rallying the house: ${parsed.data.label}. Who's in?`,
-  });
-  return error ? { error: "Couldn't send the rally. Try again in a minute." } : {};
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      household_id: me.householdId,
+      user_id: me.userId,
+      body: `${me.displayName} is rallying the house: ${parsed.data.label}. Who's in?`,
+    })
+    .select("id")
+    .single();
+  if (error) return { error: "Couldn't send the rally. Try again in a minute." };
+  await sendPush("message", data.id);
+  return {};
 }
 
 export async function clearStatus() {

@@ -12,6 +12,8 @@ cp .env.example .env.local   # fill in the Supabase URL + publishable (anon) key
 pnpm dev                     # http://localhost:3000
 ```
 
+Generate web-push keys with `npx web-push generate-vapid-keys` and set `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` (the private one is server-only).
+
 `SUPABASE_SERVICE_ROLE_KEY` is server-only and not needed yet. Never expose it to the client.
 
 ## Database
@@ -42,7 +44,7 @@ The script is idempotent. In the Supabase dashboard, turn **off**
 RLS tests run against the linked database inside a block that always rolls back:
 
 ```bash
-for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile; do supabase db query --linked -f supabase/tests/$f.sql; done
+for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push; do supabase db query --linked -f supabase/tests/$f.sql; done
 ```
 
 Passing looks like an error whose message is `ALL RLS TESTS PASSED (rolled back)`.

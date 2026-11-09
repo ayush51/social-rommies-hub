@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PhotoSlot } from "@/components/photo-slot";
 import { compress } from "@/lib/image";
+import { notify } from "@/app/(app)/push-actions";
 import { createClient } from "@/lib/supabase/client";
 
 type Existing = { id: string; photo_path: string; selfie_path: string | null; caption: string | null };
@@ -15,13 +16,8 @@ type Props = {
 };
 
 const usePreview = (file?: File, fallback?: string) => {
-  const [url, setUrl] = useState<string>();
-  useEffect(() => {
-    if (!file) return setUrl(undefined);
-    const u = URL.createObjectURL(file);
-    setUrl(u);
-    return () => URL.revokeObjectURL(u);
-  }, [file]);
+  const url = useMemo(() => (file ? URL.createObjectURL(file) : undefined), [file]);
+  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
   return url ?? fallback;
 };
 
@@ -52,9 +48,18 @@ export function PostComposer({ householdId, userId, existing, existingUrls }: Pr
       const photo_path = main ? await upload(main, "main") : existing!.photo_path;
       const selfie_path = selfie ? await upload(selfie, "selfie") : (existing?.selfie_path ?? null);
       const fields = { photo_path, selfie_path, caption: caption.trim() || null };
-      const { error } = existing
-        ? await supabase.from("daily_posts").update(fields).eq("id", existing.id)
-        : await supabase.from("daily_posts").insert({ household_id: householdId, user_id: userId, ...fields });
+      let error;
+      if (existing) {
+        ({ error } = await supabase.from("daily_posts").update(fields).eq("id", existing.id));
+      } else {
+        const res = await supabase
+          .from("daily_posts")
+          .insert({ household_id: householdId, user_id: userId, ...fields })
+          .select("id")
+          .single();
+        error = res.error;
+        if (res.data) void notify("post", res.data.id);
+      }
       if (error) throw error;
       const stale = [main && existing?.photo_path, selfie && existing?.selfie_path].filter(Boolean) as string[];
       if (stale.length) await supabase.storage.from("daily").remove(stale);

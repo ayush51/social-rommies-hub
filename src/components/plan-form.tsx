@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { notify } from "@/app/(app)/push-actions";
 import { createClient } from "@/lib/supabase/client";
 
 type Plan = { id: string; title: string; description: string | null; location: string | null; starts_at: string };
@@ -45,7 +46,10 @@ export function PlanForm({ householdId, userId, plan }: { householdId: string; u
         .select("id")
         .single();
       if (error) setError("Couldn't create the plan.");
-      else router.push(`/plans/${data.id}`);
+      else {
+        void notify("plan", data.id);
+        router.push(`/plans/${data.id}`);
+      }
     }
     setBusy(false);
   }

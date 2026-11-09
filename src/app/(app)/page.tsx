@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { SeenAt } from "@/components/relative-time";
 import { signedUrls } from "@/lib/photos";
+import { nowMs } from "@/lib/time";
 import { signOut } from "@/app/(auth)/login/actions";
 import { LiveRefresh } from "@/components/live-refresh";
 import { LocalTime } from "@/components/local-time";
@@ -26,7 +27,7 @@ export default async function HomePage() {
     .from("plans")
     .select("id, title, starts_at")
     .eq("status", "scheduled")
-    .gte("starts_at", new Date(Date.now() - 2 * 3600_000).toISOString())
+    .gte("starts_at", new Date(nowMs() - 2 * 3600_000).toISOString())
     .order("starts_at")
     .limit(3);
   const avatars = await signedUrls((members ?? []).map((m) => m.profiles?.avatar_url ?? null), "avatars");
