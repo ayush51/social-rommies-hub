@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Image as ImageIcon, Plus, Reply, Send, SmilePlus, Trash2, X } from "lucide-react";
+import { Camera, Image as ImageIcon, Pencil, Plus, Reply, Send, SmilePlus, Trash2, X } from "lucide-react";
 import { notify } from "@/app/(app)/push-actions";
 import { compress } from "@/lib/image";
+import { nowMs } from "@/lib/time";
+import { announceRead } from "@/lib/unread";
 import { createClient } from "@/lib/supabase/client";
 
 export type Msg = {
@@ -14,11 +16,12 @@ export type Msg = {
   image_path: string | null;
   reply_to: string | null;
   created_at: string;
+  edited_at?: string | null;
 };
 export type Reaction = { message_id: string; user_id: string; emoji: string };
 
 const EMOJI = ["👍", "😂", "❤️", "🔥", "😮", "😢", "🙏", "🎉"];
-const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at";
+const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at, edited_at";
 
 type Props = {
   householdId: string;
@@ -46,6 +49,7 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
   const [tray, setTray] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string>();
+  const [editing, setEditing] = useState<{ id: string; text: string }>();
   const bottom = useRef<HTMLDivElement>(null);
   const camera = useRef<HTMLInputElement>(null);
   const library = useRef<HTMLInputElement>(null);
@@ -65,6 +69,10 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
         const m = p.new as Msg;
         if (!inRoom(m)) return;
         setMessages((cur) => (cur.some((x) => x.id === m.id) ? cur : [...cur, m]));
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "messages", filter }, (p) => {
+        const m = p.new as Msg;
+        setMessages((cur) => cur.map((x) => (x.id === m.id ? { ...x, body: m.body, edited_at: m.edited_at } : x)));
       })
       .on("postgres_changes", { event: "DELETE", schema: "public", table: "messages", filter }, (p) => {
         const id = (p.old as Msg).id;
@@ -97,6 +105,12 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
 
   useEffect(() => bottom.current?.scrollIntoView({ block: "end" }), [messages.length]);
 
+  // looking at the thread counts as reading it (also for messages that arrive while it is open)
+  useEffect(() => {
+    const t = setTimeout(() => { void supabase.rpc("mark_chat_read", { p_thread: peerId ?? "group" }).then(announceRead); }, 300);
+    return () => clearTimeout(t);
+  }, [supabase, peerId, messages.length]);
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const body = draft.trim();
@@ -127,6 +141,17 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
     } finally {
       setSending(false);
     }
+  }
+
+  async function saveEdit() {
+    if (!editing) return;
+    const body = editing.text.trim();
+    const target = messages.find((x) => x.id === editing.id);
+    if (!target || (!body && !target.image_path)) return;
+    const { error } = await supabase.from("messages").update({ body }).eq("id", editing.id);
+    if (error) return setError("Couldn't save that edit.");
+    setMessages((cur) => cur.map((x) => (x.id === editing.id ? { ...x, body, edited_at: new Date().toISOString() } : x)));
+    setEditing(undefined);
   }
 
   async function react(messageId: string, emoji: string) {
@@ -183,7 +208,7 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
                       ? <img src={urls[m.image_path]} alt="" className="max-h-72 w-full object-cover" />
                       : <span className="block h-40 w-56 animate-pulse bg-neutral-300/50" />
                   )}
-                  {m.body && <span className="block px-4 py-2">{m.body}</span>}
+                  {m.body && <span className="block px-4 py-2">{m.body}{m.edited_at && <span className="ml-1 text-[10px] opacity-60">edited</span>}</span>}
                 </button>
                 <button aria-label="React or reply" onClick={() => setOpen(open === m.id ? undefined : m.id)} className="flex h-11 w-9 shrink-0 items-center justify-center text-neutral-400">
                   <SmilePlus size={16} />
@@ -207,6 +232,7 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
                   </div>
                   <div className="mt-1 flex items-center gap-3 px-1 text-sm">
                     <button onClick={() => { setReplyTo(m); setOpen(undefined); }} className="flex min-h-11 items-center gap-1 text-neutral-600 dark:text-neutral-300"><Reply size={16} /> Reply</button>
+                    {mine && nowMs() - new Date(m.created_at).getTime() < 3600_000 && <button onClick={() => { setEditing({ id: m.id, text: m.body }); setOpen(undefined); }} className="flex min-h-11 items-center gap-1 text-neutral-600 dark:text-neutral-300"><Pencil size={16} /> Edit</button>}
                     {canDelete && <button onClick={() => remove(m)} className="flex min-h-11 items-center gap-1 text-red-500"><Trash2 size={16} /> Delete</button>}
                   </div>
                   {chips.length > 0 && (
@@ -220,6 +246,13 @@ export function ChatRoom({ householdId, userId, isAdmin, names, peerId = null, i
         <div ref={bottom} />
       </div>
 
+      {editing && (
+        <div className="mt-2 flex items-center gap-2 rounded-2xl bg-neutral-100 p-2 dark:bg-neutral-900">
+          <input autoFocus aria-label="Edit message" value={editing.text} onChange={(e) => setEditing({ ...editing, text: e.target.value })} maxLength={2000} className="min-w-0 flex-1 rounded-full bg-white px-4 py-3 dark:bg-neutral-800" />
+          <button onClick={saveEdit} className="min-h-11 rounded-full bg-violet-600 px-4 text-sm font-semibold text-white">Save</button>
+          <button aria-label="Cancel edit" onClick={() => setEditing(undefined)} className="flex h-11 w-11 items-center justify-center"><X size={16} /></button>
+        </div>
+      )}
       {replyTo && (
         <div className="mt-2 flex items-center justify-between rounded-2xl bg-neutral-100 px-3 py-2 text-xs dark:bg-neutral-900">
           <span className="truncate">Replying to {names[replyTo.user_id] ?? "someone"}: {replyTo.body || "Photo"}</span>

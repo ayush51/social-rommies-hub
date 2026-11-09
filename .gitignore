@@ -46,3 +46,6 @@ next-env.d.ts
 /e2e/screens/
 /test-results/
 /playwright-report/
+
+# agent worktrees
+/.claude/

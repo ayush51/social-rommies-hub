@@ -31,7 +31,7 @@ export default async function HomePage() {
     { count: openMarkets },
     { count: posted },
   ] = await Promise.all([
-    supabase.from("household_members").select("user_id, profiles(display_name, nickname, avatar_url, last_seen_at)"),
+    supabase.from("household_members").select("user_id, profiles(display_name, nickname, avatar_url, last_seen_at, dob)"),
     supabase.from("statuses").select("user_id, kind, label, expires_at").or(`expires_at.is.null,expires_at.gt.${nowIso}`),
     supabase
       .from("plans")
@@ -49,6 +49,8 @@ export default async function HomePage() {
   const byUser = new Map(statuses?.map((s) => [s.user_id, s]));
   const mine = byUser.get(me.userId);
   const avatars = await signedUrls((members ?? []).map((m) => m.profiles?.avatar_url ?? null), "avatars");
+  const todayMd = new Date(nowMs()).toLocaleDateString("en-CA", { timeZone: me.timezone }).slice(5);
+  const birthdays = (members ?? []).filter((m) => m.profiles?.dob?.slice(5) === todayMd).map((m) => m.profiles?.display_name);
   const poll = pollRaw as unknown as ThursdayPoll | null;
   const past = (pastRaw ?? []) as unknown as CardPast;
 
@@ -56,6 +58,9 @@ export default async function HomePage() {
     <>
       <LiveRefresh table="statuses" householdId={me.householdId} />
       <h1 className="text-3xl font-bold tracking-tight">{me.householdName}</h1>
+      {birthdays.length > 0 && (
+        <p className="mt-4 rounded-3xl bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">Birthday today: {birthdays.join(", ")}</p>
+      )}
       <StatusPanel current={mine?.label} />
       <Link href="/daily" className="mt-4 flex items-center justify-between rounded-3xl bg-violet-600 px-4 py-4 text-white">
         <span className="font-semibold">Today&apos;s photos</span>

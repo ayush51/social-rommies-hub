@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 
 export type PostView = {
   id: string;
+  photo_path: string;
+  selfie_path: string | null;
   user_id: string;
   caption: string | null;
   photoUrl?: string;
@@ -24,6 +26,7 @@ export function PostCard({ post, householdId, userId, isAdmin, names }: Props) {
   const supabase = createClient();
   const [draft, setDraft] = useState("");
   const [tipMsg, setTipMsg] = useState<string>();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   async function react(emoji: string) {
     const mine = post.reactions.some((r) => r.user_id === userId && r.emoji === emoji);
@@ -42,6 +45,12 @@ export function PostCard({ post, householdId, userId, isAdmin, names }: Props) {
     );
   }
 
+  async function deletePost() {
+    await supabase.from("daily_posts").delete().eq("id", post.id);
+    await supabase.storage.from("daily").remove([post.photo_path, ...(post.selfie_path ? [post.selfie_path] : [])]);
+    router.refresh();
+  }
+
   async function comment(e: React.FormEvent) {
     e.preventDefault();
     const body = draft.trim();
@@ -58,7 +67,14 @@ export function PostCard({ post, householdId, userId, isAdmin, names }: Props) {
 
   return (
     <article className="overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-900">
-      <p className="px-4 pt-3 font-semibold">{names[post.user_id]}</p>
+      <div className="flex items-center justify-between px-4 pt-3">
+        <p className="font-semibold">{names[post.user_id]}</p>
+        {(post.user_id === userId || isAdmin) && (
+          <button onClick={() => (confirmDelete ? deletePost() : setConfirmDelete(true))} className={`flex min-h-11 items-center gap-1 px-2 text-sm ${confirmDelete ? "text-red-500" : "text-neutral-500"}`}>
+            <Trash2 size={14} /> {confirmDelete ? "Confirm delete" : "Delete"}
+          </button>
+        )}
+      </div>
       <div className="relative mt-2 aspect-[3/4] bg-neutral-200 dark:bg-neutral-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {post.photoUrl && <img src={post.photoUrl} alt="" className="h-full w-full object-cover" />}

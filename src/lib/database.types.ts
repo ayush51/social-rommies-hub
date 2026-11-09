@@ -188,6 +188,32 @@ export type Database = {
           },
         ]
       }
+      chat_reads: {
+        Row: {
+          last_read_at: string
+          thread: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          thread: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          thread?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_posts: {
         Row: {
           caption: string | null
@@ -483,54 +509,6 @@ export type Database = {
         }
         Relationships: []
       }
-      invites: {
-        Row: {
-          code: string
-          created_at: string
-          created_by: string
-          expires_at: string
-          household_id: string
-          id: string
-          max_uses: number
-          uses: number
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          created_by: string
-          expires_at?: string
-          household_id: string
-          id?: string
-          max_uses?: number
-          uses?: number
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          created_by?: string
-          expires_at?: string
-          household_id?: string
-          id?: string
-          max_uses?: number
-          uses?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "invites_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invites_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       ledger_entries: {
         Row: {
           amount: number
@@ -584,6 +562,57 @@ export type Database = {
             foreignKeyName: "ledger_entries_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_shares: {
+        Row: {
+          accuracy_m: number | null
+          expires_at: string
+          household_id: string
+          lat: number
+          lng: number
+          paused: boolean
+          precision: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          expires_at: string
+          household_id: string
+          lat: number
+          lng: number
+          paused?: boolean
+          precision: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          expires_at?: string
+          household_id?: string
+          lat?: number
+          lng?: number
+          paused?: boolean
+          precision?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_shares_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_shares_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -801,6 +830,7 @@ export type Database = {
         Row: {
           body: string
           created_at: string
+          edited_at: string | null
           household_id: string
           id: string
           image_path: string | null
@@ -811,6 +841,7 @@ export type Database = {
         Insert: {
           body: string
           created_at?: string
+          edited_at?: string | null
           household_id: string
           id?: string
           image_path?: string | null
@@ -821,6 +852,7 @@ export type Database = {
         Update: {
           body?: string
           created_at?: string
+          edited_at?: string | null
           household_id?: string
           id?: string
           image_path?: string | null
@@ -1165,6 +1197,38 @@ export type Database = {
           upgrade_cost?: number | null
         }
         Relationships: []
+      }
+      notification_prefs: {
+        Row: {
+          muted: string[]
+          quiet_end: string | null
+          quiet_start: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          muted?: string[]
+          quiet_end?: string | null
+          quiet_start?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          muted?: string[]
+          quiet_end?: string | null
+          quiet_start?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_prefs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plan_comments: {
         Row: {
@@ -1767,6 +1831,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      birthday_reminders_at: { Args: { p_now: string }; Returns: number }
       cancel_market: {
         Args: { p_market: string; p_reason?: string }
         Returns: undefined
@@ -1779,15 +1844,8 @@ export type Database = {
       card_past: { Args: { p_days?: number }; Returns: Json }
       card_prompt_for: { Args: { d: string; hid: string }; Returns: string }
       card_today: { Args: never; Returns: Json }
+      chat_unread: { Args: never; Returns: Json }
       claim_daily_reward: { Args: never; Returns: number }
-      create_household: {
-        Args: { p_name: string; p_timezone?: string }
-        Returns: string
-      }
-      create_invite: {
-        Args: { p_household: string; p_max_uses?: number }
-        Returns: string
-      }
       create_market: {
         Args: {
           p_closes_at: string
@@ -1818,6 +1876,8 @@ export type Database = {
         }
         Returns: string
       }
+      enqueue_birthdays_reminders: { Args: never; Returns: number }
+      enqueue_location_reminders: { Args: never; Returns: number }
       enqueue_market_reminders: { Args: { p_now?: string }; Returns: number }
       enqueue_reminders: { Args: { p_now?: string }; Returns: number }
       enqueue_reminders_all: { Args: never; Returns: number }
@@ -1828,6 +1888,27 @@ export type Database = {
       household_today: { Args: { hid: string }; Returns: string }
       is_household_admin: { Args: { hid: string }; Returns: boolean }
       is_household_member: { Args: { hid: string }; Returns: boolean }
+      location_pause: { Args: { p_paused: boolean }; Returns: undefined }
+      location_round: {
+        Args: { p_precision: string; p_v: number }
+        Returns: number
+      }
+      location_share: {
+        Args: {
+          p_accuracy: number
+          p_lat: number
+          p_lng: number
+          p_minutes: number
+          p_precision: string
+        }
+        Returns: string
+      }
+      location_stop: { Args: never; Returns: undefined }
+      location_update: {
+        Args: { p_accuracy: number; p_lat: number; p_lng: number }
+        Returns: boolean
+      }
+      mark_chat_read: { Args: { p_thread: string }; Returns: undefined }
       memories: {
         Args: { p_household: string; p_limit?: number }
         Returns: {
@@ -1991,6 +2072,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      push_allowed: {
+        Args: { p_category: string; p_user: string }
+        Returns: boolean
+      }
       push_targets: {
         Args: { p_kind: string; p_ref: string }
         Returns: {
@@ -2002,7 +2087,7 @@ export type Database = {
           url: string
         }[]
       }
-      redeem_invite: { Args: { p_code: string }; Returns: string }
+      reminder_category: { Args: { p_kind: string }; Returns: string }
       reminders_claim: {
         Args: { p_secret: string }
         Returns: {
@@ -2028,6 +2113,10 @@ export type Database = {
       }
       save_subscription: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      set_notification_prefs: {
+        Args: { p_muted: string[]; p_quiet_end: string; p_quiet_start: string }
         Returns: undefined
       }
       settle_cards: { Args: { p_hid: string }; Returns: undefined }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUnread } from "@/lib/unread";
 import { Camera, CalendarDays, Gamepad2, House, MessageCircle } from "lucide-react";
 
 const items = [
@@ -14,6 +15,7 @@ const items = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const unread = useUnread();
   return (
     <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 bg-white pb-[max(env(safe-area-inset-bottom),0.75rem)] dark:border-neutral-800 dark:bg-neutral-950">
       <ul className="mx-auto flex max-w-md">
@@ -27,7 +29,12 @@ export function BottomNav() {
                   active ? "text-violet-600 dark:text-violet-400" : "text-neutral-500"
                 }`}
               >
-                <Icon size={24} strokeWidth={active ? 2.5 : 2} />
+                <span className="relative">
+                  <Icon size={24} strokeWidth={active ? 2.5 : 2} />
+                  {href === "/chat" && unread.total > 0 && (
+                    <span aria-label={`${unread.total} unread`} className="absolute -right-2.5 -top-1.5 min-w-4 rounded-full bg-red-500 px-1 text-center text-[10px] font-bold leading-4 text-white">{unread.total > 9 ? "9+" : unread.total}</span>
+                  )}
+                </span>
                 {label}
               </Link>
             </li>

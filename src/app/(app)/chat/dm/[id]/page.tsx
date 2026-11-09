@@ -5,7 +5,7 @@ import { signedUrls } from "@/lib/photos";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
-const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at";
+const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at, edited_at";
 
 export default async function DmPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Avatar } from "@/components/avatar";
+import { DmChips } from "@/components/dm-chips";
 import { ChatRoom, type Msg } from "@/components/chat-room";
 import { signedUrls } from "@/lib/photos";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
-const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at";
+const COLS = "id, user_id, recipient_id, body, image_path, reply_to, created_at, edited_at";
 
 export default async function ChatPage() {
   const me = await getMe();
@@ -26,14 +25,7 @@ export default async function ChatPage() {
   return (
     <>
       <h1 className="text-3xl font-bold tracking-tight">Chat</h1>
-      <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
-        {others.map((m) => (
-          <Link key={m.user_id} href={`/chat/dm/${m.user_id}`} className="flex shrink-0 flex-col items-center gap-1 text-xs text-neutral-600 dark:text-neutral-300">
-            <Avatar url={m.profiles?.avatar_url ? avatars.get(m.profiles.avatar_url) : null} name={m.profiles?.display_name ?? "?"} size={44} />
-            {m.profiles?.display_name}
-          </Link>
-        ))}
-      </div>
+      <DmChips people={others.map((m) => ({ id: m.user_id, name: m.profiles?.display_name ?? "", avatarUrl: m.profiles?.avatar_url ? avatars.get(m.profiles.avatar_url) : null }))} />
       <p className="mb-2 mt-3 text-xs font-semibold uppercase tracking-wider text-neutral-500">Group</p>
       <ChatRoom
         className="h-[max(18rem,calc(100dvh-19.5rem))]"

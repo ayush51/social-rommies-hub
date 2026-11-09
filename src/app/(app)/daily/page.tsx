@@ -27,6 +27,8 @@ export default async function DailyPage() {
 
   const views: PostView[] = (posts ?? []).map((p) => ({
     id: p.id,
+    photo_path: p.photo_path,
+    selfie_path: p.selfie_path,
     user_id: p.user_id,
     caption: p.caption,
     photoUrl: urls.get(p.photo_path),

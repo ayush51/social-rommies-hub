@@ -6,7 +6,7 @@ declare
   a uuid := gen_random_uuid(); b uuid := gen_random_uuid(); c uuid := gen_random_uuid();
   d uuid := gen_random_uuid(); e uuid := gen_random_uuid();
   h1 uuid := gen_random_uuid(); h2 uuid := gen_random_uuid();
-  n int; code text; denied boolean;
+  n int; denied boolean;
 begin
   insert into auth.users (id, email) select u, u || '@test.invalid' from unnest(array[a,b,c,d,e]) u;
   insert into public.households (id, name) values (h1, 'H1'), (h2, 'H2');
@@ -32,14 +32,7 @@ begin
   begin insert into public.household_members (household_id, user_id) values (h1, c);
   exception when others then denied := true; end;
   if not denied then raise exception 'FAIL: direct insert into household_members allowed'; end if;
-  denied := false;
-  begin perform public.create_invite(h1);
-  exception when others then denied := true; end;
-  if not denied then raise exception 'FAIL: non-admin created invite'; end if;
-  denied := false;
-  begin perform public.create_household('Mine');
-  exception when others then denied := true; end;
-  if not denied then raise exception 'FAIL: create_household still callable'; end if;
+  if to_regproc('public.create_invite') is not null or to_regproc('public.redeem_invite') is not null or to_regproc('public.create_household') is not null or to_regclass('public.invites') is not null then raise exception 'FAIL: invite machinery still exists'; end if;
   reset role;
 
   -- admin A
@@ -48,9 +41,6 @@ begin
   update public.households set name = 'H1 renamed' where id = h1;
   get diagnostics n = row_count;
   if n <> 1 then raise exception 'FAIL: admin could not update household'; end if;
-  code := public.create_invite(h1, 1);
-  select count(*) into n from public.invites;
-  if n <> 1 then raise exception 'FAIL: admin sees % invites, expected 1', n; end if;
   reset role;
 
   -- outsider C (other household)
@@ -58,29 +48,8 @@ begin
   set local role authenticated;
   select count(*) into n from public.households;
   if n <> 1 then raise exception 'FAIL: C sees % households, expected 1', n; end if;
-  select count(*) into n from public.invites;
-  if n <> 0 then raise exception 'FAIL: C sees H1 invites'; end if;
   select count(*) into n from public.profiles where id in (a, b);
   if n <> 0 then raise exception 'FAIL: C sees H1 profiles'; end if;
-  denied := false;
-  begin perform public.redeem_invite(code);
-  exception when others then denied := true; end;
-  if not denied then raise exception 'FAIL: user already in a household redeemed invite'; end if;
-  reset role;
-
-  -- invite redemption: single use
-  perform set_config('request.jwt.claims', json_build_object('sub', d, 'role', 'authenticated')::text, true);
-  set local role authenticated;
-  if public.redeem_invite(code) <> h1 then raise exception 'FAIL: D did not join H1'; end if;
-  select count(*) into n from public.household_members;
-  if n <> 3 then raise exception 'FAIL: D sees % members after joining, expected 3', n; end if;
-  reset role;
-  perform set_config('request.jwt.claims', json_build_object('sub', e, 'role', 'authenticated')::text, true);
-  set local role authenticated;
-  denied := false;
-  begin perform public.redeem_invite(code);
-  exception when others then denied := true; end;
-  if not denied then raise exception 'FAIL: single-use invite redeemed twice'; end if;
   reset role;
 
   -- anonymous
@@ -89,10 +58,6 @@ begin
   n := 0;
   begin select count(*) into n from public.households; exception when others then n := 0; end;
   if n <> 0 then raise exception 'FAIL: anon reads households'; end if;
-  denied := false;
-  begin perform public.redeem_invite(code);
-  exception when others then denied := true; end;
-  if not denied then raise exception 'FAIL: anon can call redeem_invite'; end if;
   reset role;
 
   raise exception 'ALL RLS TESTS PASSED (rolled back)';
