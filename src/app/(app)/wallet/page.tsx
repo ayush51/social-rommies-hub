@@ -12,6 +12,10 @@ const describe = (kind: string, other?: string | null) =>
     tip_in: `Tip from ${other ?? "a roommate"}`,
     game: "Daily card vote",
     poll: "Thirsty Thursday vote",
+    adjustment: "Correction",
+    bet_out: "Prediction bet",
+    bet_payout: "Prediction win",
+    bet_refund: "Prediction refund",
   })[kind] ?? kind;
 
 export default async function WalletPage() {
@@ -30,8 +34,8 @@ export default async function WalletPage() {
       <LiveRefresh table="wallets" householdId={me.householdId} />
       <h1 className="text-3xl font-bold tracking-tight">Wallet</h1>
       <section className="mt-4 rounded-3xl bg-violet-600 p-5 text-white">
-        <p className="flex items-center gap-2 text-sm text-violet-100"><Coins size={16} /> Abby Coins</p>
-        <p className="mt-1 text-5xl font-bold tabular-nums">{balance ?? 0}</p>
+        <p className="flex items-center gap-2 text-sm text-violet-100"><Coins size={16} /> Wallet</p>
+        <p className="mt-1 text-4xl font-bold">I have <span className="tabular-nums">{balance ?? 0}</span> {balance === 1 ? "bingdon" : "bingdons"}</p>
         <div className="mt-4"><ClaimButton /></div>
       </section>
 

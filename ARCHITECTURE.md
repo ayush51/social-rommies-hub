@@ -19,7 +19,7 @@ Next.js (App Router, TypeScript) · Tailwind + shadcn/ui · Supabase (Postgres, 
 - Append-only `ledger_entries(id, household_id, user_id, amount, reason, idempotency_key unique, created_at)`; no update/delete policies or grants.
 - Balance = materialised `wallets.balance` updated in the same transaction as the ledger insert, under `SELECT … FOR UPDATE`, with `CHECK (balance >= 0)`.
 - Rewards and daily claims use deterministic idempotency keys (e.g. `daily:{user}:{local_date}`), so retries and replays are no-ops.
-- Abby Coins have no cash value: no deposit, withdrawal or redemption paths exist.
+- bingdons have no cash value: no deposit, withdrawal or redemption paths exist.
 
 ## Time
 Household has an IANA `timezone` and `daily_reset_time`. Scheduled jobs compute the household-local date in SQL and write rows keyed by `(household_id, local_date)` with unique constraints, so re-running a job is idempotent. Photo expiry is enforced in the backend: the feed RPC/RLS filters on `local_date = household_today()`; the UI never decides.

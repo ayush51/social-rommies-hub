@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { SeenAt } from "@/components/relative-time";
-import type { CardToday } from "@/lib/cards";
+import { PastQuestions } from "@/components/past-questions";
+import { SuggestQuestion } from "@/components/suggest-question";
+import type { CardPast, CardToday } from "@/lib/cards";
 import type { ThursdayPoll } from "@/lib/thursday";
 import { signedUrls } from "@/lib/photos";
 import { nowMs } from "@/lib/time";
@@ -37,6 +39,9 @@ export default async function HomePage() {
   const { data: card } = await supabase.rpc("card_today");
   const { data: pollRaw } = await supabase.rpc("thursday_poll");
   const poll = pollRaw as unknown as ThursdayPoll | null;
+  const { data: pastRaw } = await supabase.rpc("card_past", { p_days: 7 });
+  const past = (pastRaw ?? []) as unknown as CardPast;
+  const { count: openMarkets } = await supabase.from("markets").select("id", { count: "exact", head: true }).eq("status", "open");
   const { count: posted } = await supabase.from("daily_posts").select("id", { count: "exact", head: true });
 
   return (
@@ -49,6 +54,8 @@ export default async function HomePage() {
         <span>{posted ?? 0} of {members?.length ?? 0} posted</span>
       </Link>
       {card && <CardsPanel round={card as unknown as CardToday} />}
+      <SuggestQuestion />
+      <PastQuestions days={past} />
       {poll && (
         <Link href="/thursday" className="mt-6 flex items-center justify-between gap-3 rounded-3xl bg-neutral-100 px-4 py-4 dark:bg-neutral-900">
           <span className="font-semibold">Thirsty Thursday</span>
@@ -61,6 +68,10 @@ export default async function HomePage() {
           </span>
         </Link>
       )}
+      <Link href="/predictions" className="mt-3 flex items-center justify-between rounded-3xl bg-neutral-100 px-4 py-4 dark:bg-neutral-900">
+        <span className="font-semibold">Predictions</span>
+        <span className="text-sm text-neutral-500">{openMarkets ? `${openMarkets} open` : "Start one"}</span>
+      </Link>
       <RallyPanel />
       <section className="mt-6 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
         <div className="flex items-baseline justify-between">
@@ -106,7 +117,9 @@ export default async function HomePage() {
           );
         })}
       </ul>
-      <div className="mt-8 flex gap-4 text-sm text-neutral-500">
+      <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-500">
+        <Link href="/features">Suggest a feature</Link>
+        {me.isAdmin && <Link href="/admin" className="font-semibold text-violet-600 dark:text-violet-400">Admin mode</Link>}
         <Link href="/profile">Edit profile</Link>
         <form action={signOut}><button>Sign out</button></form>
       </div>

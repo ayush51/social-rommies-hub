@@ -1,4 +1,4 @@
-# Abingdon Bros (Roomies)
+# Abingdon Bros
 
 Private PWA for one household of roommates. See [ARCHITECTURE.md](ARCHITECTURE.md) and [TASKS.md](TASKS.md).
 
@@ -29,11 +29,12 @@ supabase gen types typescript --linked --schema public > src/lib/database.types.
 
 ## Roommates and login
 
-Login is name + shared 3-digit PIN (no email). Accounts are real Supabase users with a synthetic email
+Login is name + a personal 6-digit code, never shared (no email). Accounts are real Supabase users with a synthetic email
 (`<name>@abingdon.example.com`), so RLS applies normally. The roommate list is in `src/lib/roommates.ts`.
 
 ```bash
-SEED_PIN=<pin> ./scripts/seed.sh   # creates the household + six accounts; re-running resets all to that PIN
+./scripts/seed.sh                          # creates the household + any missing accounts, prints new codes once
+RESET_PINS=Jesse ./scripts/seed.sh         # issue a fresh code for one person (signs them out)
 ```
 
 The script is idempotent. In the Supabase dashboard, turn **off**
@@ -44,11 +45,36 @@ The script is idempotent. In the Supabase dashboard, turn **off**
 RLS tests run against the linked database inside a block that always rolls back:
 
 ```bash
-for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push rls_cards rls_thursday; do supabase db query --linked -f supabase/tests/$f.sql; done
+for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push rls_cards rls_thursday rls_reminders rls_rally rls_predictions rls_features; do supabase db query --linked -f supabase/tests/$f.sql; done
 ```
 
 Passing looks like an error whose message is `ALL RLS TESTS PASSED (rolled back)`.
 Any `FAIL:` message is a real failure.
+
+## Scheduled reminders
+
+`pg_cron` runs `enqueue_reminders()` every 5 minutes and, when something is waiting, calls `/api/cron/reminders`
+through `pg_net` with a shared secret. The endpoint claims the queued reminders and sends them as web push.
+The secret must exist in two places: the `CRON_SECRET` env var (Vercel + `.env.local`) and Supabase Vault as `cron_secret`:
+
+```bash
+supabase db query --linked "select vault.create_secret('<same value>', 'cron_secret')"
+```
+
+## Admin mode and the feature pipeline
+
+Admins see an **Admin mode** link on Home (`/admin`). The proxy answers 404 for non-admins and every admin page re-checks the role on the server.
+Roommates suggest features at `/features` (vote + comment). In admin mode an admin approves/rejects them and moves them through
+`approved -> building -> shipped`, and reviews suggested daily-card questions.
+
+Nothing is built automatically. To build approved features, generate a prompt and run it in Claude Code, review the result, then deploy:
+
+```bash
+node --no-warnings scripts/feature-prompt.ts          # prints the prompt for approved requests (most-voted first)
+claude "$(node --no-warnings scripts/feature-prompt.ts)"
+```
+
+The same prompt is available per request (and for all approved at once) in admin mode.
 
 ## Deploy
 

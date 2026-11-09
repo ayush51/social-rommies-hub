@@ -16,7 +16,12 @@ export default async function GamesPage() {
 
       <Link href="/wallet" className="mt-4 flex items-center justify-between rounded-3xl bg-violet-600 px-5 py-4 text-white">
         <span className="flex items-center gap-2 font-semibold"><Coins size={18} /> Wallet</span>
-        <span className="text-lg font-bold tabular-nums">{balance ?? 0} Abby Coins</span>
+        <span className="text-lg font-bold tabular-nums">I have {balance ?? 0} {balance === 1 ? "bingdon" : "bingdons"}</span>
+      </Link>
+
+      <Link href="/predictions" className="mt-3 flex items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
+        <span className="font-semibold">Predictions</span>
+        <span className="text-sm text-neutral-500">Bet bingdons on what happens</span>
       </Link>
 
       <h2 className="mt-8 font-semibold">Daily card: most-voted</h2>

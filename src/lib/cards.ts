@@ -1,6 +1,7 @@
 export type CardToday = {
   date: string;
   prompt: string;
+  suggested_by: string | null;
   voted: boolean;
   my_pick: string | null;
   members: number;
@@ -17,3 +18,11 @@ export type CardHistory = {
   }[];
   scores: { name: string; wins: number }[];
 };
+
+export type CardPast = {
+  date: string;
+  prompt: string;
+  suggested_by: string | null;
+  winners: string[];
+  voted_count: number;
+}[];

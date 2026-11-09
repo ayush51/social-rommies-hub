@@ -14,14 +14,14 @@ export function RallyPanel() {
   const send = () =>
     start(async () => {
       const r = await rallyHouse({ label });
-      setMsg(r.error ?? "Sent to chat.");
+      setMsg(r.error ?? (r.sent ? `Notified ${r.sent} ${r.sent === 1 ? "device" : "devices"}.` : "Sent, but nobody else has notifications turned on yet."));
       if (!r.error) setLabel("");
     });
 
   return (
     <section className="mt-6 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
       <h2 className="flex items-center gap-2 font-semibold"><Megaphone size={18} /> Rally the house</h2>
-      <p className="mt-1 text-sm text-neutral-500">Ping everyone in chat to join something.</p>
+      <p className="mt-1 text-sm text-neutral-500">Send everyone a notification to join something.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {STATUS_PRESETS.filter((s) => s.kind !== "in_bed" && s.kind !== "work").map((s) => (
           <button

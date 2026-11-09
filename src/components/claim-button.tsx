@@ -16,7 +16,7 @@ export function ClaimButton() {
         onClick={() =>
           start(async () => {
             const { data, error } = await createClient().rpc("claim_daily_reward");
-            setMsg(error ? "Couldn't claim right now." : data ? `+${data} Abby Coins` : "Already claimed today. Back tomorrow.");
+            setMsg(error ? "Couldn't claim right now." : data ? `+${data} bingdons` : "Already claimed today. Back tomorrow.");
             router.refresh();
           })
         }

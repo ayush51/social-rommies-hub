@@ -1,4 +1,4 @@
--- Phase 3: Abby Coins. Virtual only: no deposit, withdrawal or cash value anywhere.
+-- Phase 3: bingdons. Virtual only: no deposit, withdrawal or cash value anywhere.
 
 alter table public.households
   add column starting_balance int not null default 500 check (starting_balance >= 0),

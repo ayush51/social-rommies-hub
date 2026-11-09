@@ -9,12 +9,12 @@ export type LoginState = { error?: string };
 
 const schema = z.object({
   name: z.enum(ROOMMATES),
-  pin: z.string().regex(/^\d{3}$/),
+  pin: z.string().regex(/^\d{6}$/),
 });
 
 export async function signIn(_: LoginState, form: FormData): Promise<LoginState> {
   const parsed = schema.safeParse(Object.fromEntries(form));
-  if (!parsed.success) return { error: "Enter your 3-digit PIN." };
+  if (!parsed.success) return { error: "Enter your 6-digit PIN." };
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: loginEmail(parsed.data.name),

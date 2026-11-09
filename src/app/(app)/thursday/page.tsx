@@ -23,7 +23,7 @@ export default async function ThursdayPage() {
 
       {poll.phase === "open" && (
         <p className="mt-1 text-neutral-500">
-          What should {poll.cook_name} cook? Voting closes <LocalTime iso={poll.lock_at} />. {poll.total_votes} of {poll.members} voted. Voting earns 5 Abby Coins.
+          What should {poll.cook_name} cook? Voting closes <LocalTime iso={poll.lock_at} />. {poll.total_votes} of {poll.members} voted. Voting earns 5 bingdons.
         </p>
       )}
       {poll.phase !== "open" && poll.winner && (

@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/manifest.webmanifest", "/sw.js", "/icons"];
+const PUBLIC_PATHS = ["/login", "/manifest.webmanifest", "/sw.js", "/icons", "/api/cron"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -24,6 +24,12 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Admin area: answer 404 for non-admins before anything renders (pages also re-check on the server).
+  if (user && request.nextUrl.pathname.startsWith("/admin")) {
+    const { data: membership } = await supabase.from("household_members").select("role").eq("user_id", user.id).maybeSingle();
+    if (membership?.role !== "admin") return new NextResponse("Not found", { status: 404 });
+  }
 
   const isPublic = PUBLIC_PATHS.some((p) => request.nextUrl.pathname.startsWith(p));
   if (!user && !isPublic) {

@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
-# Provisions the household and six PIN-login roommates on the linked Supabase project.
-# Usage: SEED_PIN=123 ./scripts/seed.sh   (one shared PIN; re-running resets everyone to it)
-PIN=${SEED_PIN:?set SEED_PIN}
+# Provisions the household and six roommates on the linked Supabase project.
+# Every roommate gets their OWN random 6-digit code (never shared). New codes are printed once.
+#   ./scripts/seed.sh                      creates anything missing; existing codes are left alone
+#   RESET_PINS=Jesse,Kelly ./scripts/seed.sh   issues fresh codes for just those people (and signs them out)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 sql=$(mktemp)
 trap 'rm -f "$sql"' EXIT
 
+RESET=",${RESET_PINS:-},"
+used=" "
 rows=""
 for entry in Jay:member Micah:member Tyler:member Ayush:admin Jesse:member Kelly:member; do
   name=${entry%%:*}; role=${entry##*:}
-  rows+="('$name','$role','$PIN'),"
+  while :; do
+    pin=$(printf '%06d' $(( $(od -An -N4 -tu4 /dev/urandom) % 1000000 )))
+    [[ "$used" == *" $pin "* ]] || break
+  done
+  used+="$pin "
+  reset=false; [[ "$RESET" == *",$name,"* ]] && reset=true
+  rows+="('$name','$role','$pin',$reset),"
+  echo "$name  $pin" >> "$sql.pins"
 done
 
 cat > "$sql" <<SQL
@@ -23,7 +33,7 @@ begin
   insert into public.dishes (household_id, name)
   select hid, d from unnest(array['Tacos','Chicken tikka masala','Pad thai','Smash burgers','Pasta carbonara','Fried rice','Enchiladas','Ramen']) d
   on conflict do nothing;
-  for r in select * from (values ${rows%,}) v(name, role, pin) loop
+  for r in select * from (values ${rows%,}) v(name, role, pin, reset) loop
     mail := lower(r.name) || '@abingdon.example.com';
     select id into uid from auth.users where email = mail;
     if uid is null then
@@ -37,8 +47,11 @@ begin
       insert into auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
       values (gen_random_uuid(), uid, uid::text,
         jsonb_build_object('sub', uid::text, 'email', mail, 'email_verified', true), 'email', now(), now(), now());
-    else
+      raise notice 'NEWPIN % %', r.name, r.pin;
+    elsif r.reset then
       update auth.users set encrypted_password = extensions.crypt(r.pin, extensions.gen_salt('bf')) where id = uid;
+      delete from auth.sessions where user_id = uid;
+      raise notice 'NEWPIN % %', r.name, r.pin;
     end if;
     update public.profiles set display_name = r.name where id = uid;
     insert into public.household_members (household_id, user_id, role) values (hid, uid, r.role)
@@ -46,4 +59,7 @@ begin
   end loop;
 end \$\$;
 SQL
-supabase db query --linked -f "$sql" >/dev/null 2>&1 && echo "seeded" || { echo "seed failed"; exit 1; }
+rm -f "$sql.pins"
+# NOTICE lines carry the new codes; everything else is silenced.
+supabase db query --linked -f "$sql" 2>&1 | grep -oE 'NEWPIN [A-Za-z]+ [0-9]{6}' | sed 's/NEWPIN //' || true
+echo "done"

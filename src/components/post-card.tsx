@@ -35,8 +35,8 @@ export function PostCard({ post, householdId, userId, isAdmin, names }: Props) {
   async function tip(amount: number) {
     const { error } = await supabase.rpc("tip_post", { p_post: post.id, p_amount: amount, p_key: crypto.randomUUID() });
     setTipMsg(
-      !error ? `Tipped ${amount} Abby Coins`
-      : error.message.includes("insufficient") ? "Not enough Abby Coins."
+      !error ? `Tipped ${amount} bingdons`
+      : error.message.includes("insufficient") ? "Not enough bingdons."
       : error.message.includes("slow down") ? "Slow down a little."
       : "Tip failed.",
     );

@@ -64,7 +64,7 @@ begin
   if jsonb_array_length(j->'rounds'->0->'winners') <> 1 then raise exception 'FAIL: one winner on the first day: %', j->'rounds'->0; end if;
   if jsonb_array_length(j->'rounds'->1->'winners') <> 2 then raise exception 'FAIL: tie should crown both: %', j->'rounds'->1; end if;
   if (j->'rounds'->0->'results'->0->>'votes')::int <> 2 then raise exception 'FAIL: results tally'; end if;
-  select count(*) into n from public.ledger_entries where kind = 'game';
+  select count(*) into n from public.ledger_entries where kind = 'game' and user_id in (a, b, e);
   if n <> 2 then raise exception 'FAIL: settlement must not pay coins (got % game entries)', n; end if;
 
   raise exception 'ALL RLS TESTS PASSED (rolled back)';

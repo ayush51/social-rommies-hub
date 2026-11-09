@@ -34,8 +34,8 @@ export default function LoginPage() {
             name="pin"
             type="password"
             inputMode="numeric"
-            pattern="\d{3}"
-            maxLength={3}
+            pattern="\d{6}"
+            maxLength={6}
             autoFocus
             autoComplete="current-password"
             className="rounded-2xl border border-neutral-300 bg-transparent px-4 py-3 text-center text-2xl tracking-[0.5em] dark:border-neutral-700"

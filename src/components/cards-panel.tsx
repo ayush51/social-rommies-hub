@@ -16,6 +16,7 @@ export function CardsPanel({ round }: { round: CardToday }) {
     <section className="mt-6 rounded-3xl bg-neutral-900 p-5 text-white dark:bg-neutral-800">
       <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Daily card</p>
       <p className="mt-2 text-xl font-bold leading-snug">{round.prompt}</p>
+      {round.suggested_by && <p className="mt-1 text-xs text-neutral-400">Suggested by {round.suggested_by}</p>}
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         {round.options.map((o) => {
@@ -53,7 +54,7 @@ export function CardsPanel({ round }: { round: CardToday }) {
       <p className="mt-3 text-xs text-neutral-400">
         {round.voted
           ? `${round.voted_count} of ${round.members} voted. Tap another name to change your pick.`
-          : "Vote to see everyone's picks. Voting earns 5 Abby Coins."}
+          : "Vote to see everyone's picks. Voting earns 5 bingdons."}
       </p>
       {error && <p className="mt-2 text-sm text-red-300">{error}</p>}
     </section>

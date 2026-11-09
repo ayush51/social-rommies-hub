@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      card_days: {
+        Row: {
+          household_id: string
+          local_date: string
+          prompt: string
+          suggested_by: string | null
+        }
+        Insert: {
+          household_id: string
+          local_date: string
+          prompt: string
+          suggested_by?: string | null
+        }
+        Update: {
+          household_id?: string
+          local_date?: string
+          prompt?: string
+          suggested_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_days_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_days_suggested_by_fkey"
+            columns: ["suggested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_picks: {
         Row: {
           household_id: string
@@ -104,6 +140,54 @@ export type Database = {
           },
         ]
       }
+      card_suggestions: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          reviewed_at: string | null
+          status: string
+          text: string
+          used_on: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          reviewed_at?: string | null
+          status?: string
+          text: string
+          used_on?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          reviewed_at?: string | null
+          status?: string
+          text?: string
+          used_on?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_suggestions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_suggestions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_posts: {
         Row: {
           caption: string | null
@@ -180,6 +264,146 @@ export type Database = {
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_comments: {
+        Row: {
+          body: string
+          created_at: string
+          household_id: string
+          id: string
+          request_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          household_id: string
+          id?: string
+          request_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          household_id?: string
+          id?: string
+          request_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_comments_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_comments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "feature_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_requests: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          household_id: string
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          household_id: string
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          household_id?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_requests_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_votes: {
+        Row: {
+          household_id: string
+          request_id: string
+          user_id: string
+        }
+        Insert: {
+          household_id: string
+          request_id: string
+          user_id: string
+        }
+        Update: {
+          household_id?: string
+          request_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_votes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_votes_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "feature_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feature_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -359,6 +583,168 @@ export type Database = {
           {
             foreignKeyName: "ledger_entries_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_bets: {
+        Row: {
+          amount: number
+          created_at: string
+          household_id: string
+          market_id: string
+          option_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          household_id: string
+          market_id: string
+          option_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          household_id?: string
+          market_id?: string
+          option_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_bets_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_bets_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_bets_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "market_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_bets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_options: {
+        Row: {
+          id: string
+          label: string
+          market_id: string
+          position: number
+        }
+        Insert: {
+          id?: string
+          label: string
+          market_id: string
+          position: number
+        }
+        Update: {
+          id?: string
+          label?: string
+          market_id?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_options_market_id_fkey"
+            columns: ["market_id"]
+            isOneToOne: false
+            referencedRelation: "markets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      markets: {
+        Row: {
+          cancel_reason: string | null
+          closes_at: string
+          created_at: string
+          created_by: string
+          description: string | null
+          household_id: string
+          id: string
+          question: string
+          resolved_at: string | null
+          resolved_option_id: string | null
+          resolver_id: string
+          status: string
+        }
+        Insert: {
+          cancel_reason?: string | null
+          closes_at: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          household_id: string
+          id?: string
+          question: string
+          resolved_at?: string | null
+          resolved_option_id?: string | null
+          resolver_id: string
+          status?: string
+        }
+        Update: {
+          cancel_reason?: string | null
+          closes_at?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          household_id?: string
+          id?: string
+          question?: string
+          resolved_at?: string | null
+          resolved_option_id?: string | null
+          resolver_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "markets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "markets_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "markets_resolved_option_fk"
+            columns: ["resolved_option_id"]
+            isOneToOne: false
+            referencedRelation: "market_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "markets_resolver_id_fkey"
+            columns: ["resolver_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -824,6 +1210,92 @@ export type Database = {
           },
         ]
       }
+      rallies: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          label: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          label: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          label?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rallies_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rallies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminder_outbox: {
+        Row: {
+          body: string
+          created_at: string
+          household_id: string
+          id: number
+          kind: string
+          recipients: string[]
+          ref: string
+          sent_at: string | null
+          title: string
+          url: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          household_id: string
+          id?: never
+          kind: string
+          recipients: string[]
+          ref: string
+          sent_at?: string | null
+          title: string
+          url: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          household_id?: string
+          id?: never
+          kind?: string
+          recipients?: string[]
+          ref?: string
+          sent_at?: string | null
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_outbox_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       statuses: {
         Row: {
           expires_at: string | null
@@ -907,7 +1379,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_market: {
+        Args: { p_market: string; p_reason?: string }
+        Returns: undefined
+      }
+      card_ensure_day: {
+        Args: { p_date: string; p_hid: string }
+        Returns: undefined
+      }
       card_history: { Args: { p_limit?: number }; Returns: Json }
+      card_past: { Args: { p_days?: number }; Returns: Json }
       card_prompt_for: { Args: { d: string; hid: string }; Returns: string }
       card_today: { Args: never; Returns: Json }
       claim_daily_reward: { Args: never; Returns: number }
@@ -919,6 +1400,16 @@ export type Database = {
         Args: { p_household: string; p_max_uses?: number }
         Returns: string
       }
+      create_market: {
+        Args: {
+          p_closes_at: string
+          p_description: string
+          p_options: string[]
+          p_question: string
+          p_resolver: string
+        }
+        Returns: string
+      }
       do_vote: {
         Args: { p_dish: string; p_now: string; p_user: string }
         Returns: undefined
@@ -927,6 +1418,8 @@ export type Database = {
         Args: { p_endpoints: string[] }
         Returns: undefined
       }
+      enqueue_market_reminders: { Args: { p_now?: string }; Returns: number }
+      enqueue_reminders: { Args: { p_now?: string }; Returns: number }
       ensure_wallet: {
         Args: { p_hid: string; p_user: string }
         Returns: undefined
@@ -955,6 +1448,15 @@ export type Database = {
       }
       my_wallet: { Args: never; Returns: number }
       pick_card: { Args: { p_pick: string }; Returns: undefined }
+      place_bet: {
+        Args: {
+          p_amount: number
+          p_key: string
+          p_market: string
+          p_option: string
+        }
+        Returns: undefined
+      }
       poll_state: { Args: { p_now: string; p_user: string }; Returns: Json }
       poll_window: {
         Args: { hid: string; p_now: string }
@@ -968,6 +1470,7 @@ export type Database = {
           week_start: string
         }[]
       }
+      poll_winner_name: { Args: { hid: string; ws: string }; Returns: string }
       post_ledger: {
         Args: {
           p_amount: number
@@ -992,11 +1495,36 @@ export type Database = {
         }[]
       }
       redeem_invite: { Args: { p_code: string }; Returns: string }
+      reminders_claim: {
+        Args: { p_secret: string }
+        Returns: {
+          auth: string
+          body: string
+          endpoint: string
+          p256dh: string
+          title: string
+          url: string
+        }[]
+      }
+      reminders_drop: {
+        Args: { p_endpoints: string[]; p_secret: string }
+        Returns: undefined
+      }
+      resolve_market: {
+        Args: { p_market: string; p_option: string }
+        Returns: undefined
+      }
+      review_question: {
+        Args: { p_approve: boolean; p_id: string }
+        Returns: undefined
+      }
       save_subscription: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
         Returns: undefined
       }
       settle_cards: { Args: { p_hid: string }; Returns: undefined }
+      start_rally: { Args: { p_label: string }; Returns: string }
+      suggest_question: { Args: { p_text: string }; Returns: undefined }
       thursday_poll: { Args: never; Returns: Json }
       tip_post: {
         Args: { p_amount: number; p_key: string; p_post: string }

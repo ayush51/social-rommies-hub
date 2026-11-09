@@ -2,18 +2,19 @@ import "server-only";
 import { sendNotification, setVapidDetails } from "web-push";
 import { createClient } from "@/lib/supabase/server";
 
-export type PushKind = "message" | "plan" | "post";
+export type PushKind = "message" | "plan" | "post" | "rally" | "market";
 
 // The database decides who may be notified (author-only, fresh, once); this only signs and sends.
-export async function sendPush(kind: PushKind, ref: string) {
+// Returns how many devices accepted the notification.
+export async function sendPush(kind: PushKind, ref: string): Promise<number> {
   const pub = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const priv = process.env.VAPID_PRIVATE_KEY;
-  if (!pub || !priv) return;
+  if (!pub || !priv) return 0;
   setVapidDetails("https://abingdon-bros.vercel.app", pub, priv);
 
   const supabase = await createClient();
   const { data: targets } = await supabase.rpc("push_targets", { p_kind: kind, p_ref: ref });
-  if (!targets?.length) return;
+  if (!targets?.length) return 0;
 
   const results = await Promise.allSettled(
     targets.map((t) =>
@@ -31,4 +32,5 @@ export async function sendPush(kind: PushKind, ref: string) {
     })
     .map((t) => t.endpoint);
   if (dead.length) await supabase.rpc("drop_subscriptions", { p_endpoints: dead });
+  return results.filter((r) => r.status === "fulfilled").length;
 }

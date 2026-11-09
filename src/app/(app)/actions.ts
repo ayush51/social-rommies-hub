@@ -32,23 +32,13 @@ export async function setStatus(input: z.input<typeof statusSchema>): Promise<{ 
 
 const rallySchema = z.object({ label: z.string().trim().min(1).max(60) });
 
-export async function rallyHouse(input: z.input<typeof rallySchema>): Promise<{ error?: string }> {
+export async function rallyHouse(input: z.input<typeof rallySchema>): Promise<{ error?: string; sent?: number }> {
   const parsed = rallySchema.safeParse(input);
   if (!parsed.success) return { error: "Pick or type an activity." };
-  const me = await getMe();
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("messages")
-    .insert({
-      household_id: me.householdId,
-      user_id: me.userId,
-      body: `${me.displayName} is rallying the house: ${parsed.data.label}. Who's in?`,
-    })
-    .select("id")
-    .single();
-  if (error) return { error: "Couldn't send the rally. Try again in a minute." };
-  await sendPush("message", data.id);
-  return {};
+  const { data: id, error } = await supabase.rpc("start_rally", { p_label: parsed.data.label });
+  if (error) return { error: error.message.includes("slow down") ? "Easy. Wait a minute before rallying again." : "Couldn't send the rally." };
+  return { sent: await sendPush("rally", id) };
 }
 
 export async function clearStatus() {
