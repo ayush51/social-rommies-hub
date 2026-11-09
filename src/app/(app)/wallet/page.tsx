@@ -1,6 +1,7 @@
 import { Coins } from "lucide-react";
 import { ClaimButton } from "@/components/claim-button";
 import { LiveRefresh } from "@/components/live-refresh";
+import { ShopItem } from "@/components/shop-item";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,7 +23,10 @@ export default async function WalletPage() {
   const me = await getMe();
   const supabase = await createClient();
   const { data: balance } = await supabase.rpc("my_wallet"); // creates the wallet + welcome bonus on first visit
-  const [{ data: history }, { data: board }, { data: members }] = await Promise.all([
+  const [{ data: items }, { data: mine }, { data: passes }, { data: history }, { data: board }, { data: members }] = await Promise.all([
+    supabase.from("shop_items").select("code, name, description, price").order("sort"),
+    supabase.from("profiles").select("badge").eq("id", me.userId).single(),
+    supabase.from("shop_purchases").select("id").eq("item_code", "question_pass").is("used_at", null),
     supabase.from("ledger_entries").select("id, amount, kind, created_at, counterparty").order("id", { ascending: false }).limit(50),
     supabase.from("wallets").select("user_id, balance").order("balance", { ascending: false }),
     supabase.from("household_members").select("user_id, profiles(display_name)"),
@@ -38,6 +42,22 @@ export default async function WalletPage() {
         <p className="mt-1 text-4xl font-bold">I have <span className="tabular-nums">{balance ?? 0}</span> {balance === 1 ? "bingdon" : "bingdons"}</p>
         <div className="mt-4"><ClaimButton /></div>
       </section>
+
+      <h2 className="mt-8 font-semibold">Shop</h2>
+      <ul className="mt-2 space-y-2">
+        {(items ?? []).map((i) => (
+          <ShopItem
+            key={i.code}
+            code={i.code as "badge_star"}
+            name={i.name}
+            description={i.description}
+            price={i.price}
+            balance={Number(balance ?? 0)}
+            owned={i.code === `badge_${mine?.badge}`}
+            count={i.code === "question_pass" ? passes?.length : undefined}
+          />
+        ))}
+      </ul>
 
       <h2 className="mt-8 font-semibold">Leaderboard</h2>
       <ol className="mt-2 space-y-1">

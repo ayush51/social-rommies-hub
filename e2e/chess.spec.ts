@@ -66,7 +66,7 @@ test("chess lobby page", async ({ page, context }, info) => {
   await check(page, info.project.name, "/games/chess", problems);
 });
 
-test("chess game: board audit and play e4", async ({ browser, page, context }, info) => {
+test("chess game: board audit and play e4 @stateful", async ({ browser, page, context }, info) => {
   const a = await client("ayush");
   const t = await client("tyler");
   const id = await newGame(a, t);

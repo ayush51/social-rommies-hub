@@ -1812,30 +1812,36 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          badge: string | null
           created_at: string
           display_name: string
           dob: string | null
           id: string
           last_seen_at: string | null
           nickname: string | null
+          spotlight_until: string | null
         }
         Insert: {
           avatar_url?: string | null
+          badge?: string | null
           created_at?: string
           display_name: string
           dob?: string | null
           id: string
           last_seen_at?: string | null
           nickname?: string | null
+          spotlight_until?: string | null
         }
         Update: {
           avatar_url?: string | null
+          badge?: string | null
           created_at?: string
           display_name?: string
           dob?: string | null
           id?: string
           last_seen_at?: string | null
           nickname?: string | null
+          spotlight_until?: string | null
         }
         Relationships: []
       }
@@ -2043,6 +2049,79 @@ export type Database = {
           },
         ]
       }
+      shop_items: {
+        Row: {
+          code: string
+          description: string
+          name: string
+          price: number
+          sort: number
+        }
+        Insert: {
+          code: string
+          description: string
+          name: string
+          price: number
+          sort?: number
+        }
+        Update: {
+          code?: string
+          description?: string
+          name?: string
+          price?: number
+          sort?: number
+        }
+        Relationships: []
+      }
+      shop_purchases: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          item_code: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          item_code: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          item_code?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_purchases_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_purchases_item_code_fkey"
+            columns: ["item_code"]
+            isOneToOne: false
+            referencedRelation: "shop_items"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "shop_purchases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       statuses: {
         Row: {
           expires_at: string | null
@@ -2126,6 +2205,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activity_feed: { Args: { p_limit?: number }; Returns: Json }
       admin_add_roommate: {
         Args: { p_code: string; p_name: string }
         Returns: string
@@ -2535,6 +2615,7 @@ export type Database = {
         Returns: undefined
       }
       settle_cards: { Args: { p_hid: string }; Returns: undefined }
+      shop_buy: { Args: { p_item: string; p_key: string }; Returns: Json }
       start_rally: { Args: { p_label: string }; Returns: string }
       suggest_question: { Args: { p_text: string }; Returns: undefined }
       thursday_poll: { Args: never; Returns: Json }

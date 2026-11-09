@@ -43,7 +43,7 @@ async function cleanup(prefix: string) {
   execSync(`supabase db query --linked "delete from public.pets where name like '${prefix}%'"`, { stdio: "ignore" });
 }
 
-test("pets: admin adds a pet, a member feeds it, daily cap, cleanup", async ({ page, context }, info) => {
+test("pets: admin adds a pet, a member feeds it, daily cap, cleanup @stateful", async ({ page, context }, info) => {
   // stateful (adds a pet, feeds it to the daily cap): one device runs it; page layouts are audited for every device in ui.spec.ts
   test.skip(info.project.name !== "iphone-portrait", "shared account and pet");
   const project = info.project.name;

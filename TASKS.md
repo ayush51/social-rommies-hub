@@ -21,22 +21,21 @@ Each phase is independently testable and ships only the tables it needs. `[x]` d
 - [x] **Chat upgrades** — DMs (private incl. photos + reactions), 8-emoji picker with who-reacted, replies, photos from camera/library
 - [x] **8c. Abingdon Street (Monopoly-style)** — turn-based, 2-6 players, bingdon buy-in + pot, server-rolled dice, rent/sets/upgrades/jail/cards/bankruptcy, push on your turn, idle skip
 - [x] **UI test suite** (Playwright, 5 screen sizes) + error/404 screens
+- [x] **Pets** — admin-managed pets with photos, feed (free, 2/day/pet) and treats (3 bingdons, 3/day/pet), lazy hunger/happiness decay, hungry-pet reminders
+- [x] **Location sharing** — opt-in, off by default, approximate or precise, pause/stop, auto-expiry enforced in the database, always-visible "sharing" pill
+- [x] **Chess** — async 2-player chess, optional bingdon buy-in + pot, moves validated server-side (chess.js behind a secret-gated RPC), resign/draw/idle claim
+- [x] **Shop** — gold star / crown badges, 24h spotlight, question pass (skips admin review)
+- [x] **Home activity feed** — "Around the house" (no DMs, no amounts)
+- [x] **Admin dashboard** — people (roles, add roommate, reset code), settings (timezone, reset time, reward amounts), moderation, stats + error log
+- [x] **Polish** — unread badges, edit messages, delete own photo, light/dark/system theme, notification settings + quiet hours, change your own login code, birthday reminders
 - [x] **Rally** — separate Home section, posts "who's in?" to chat
 
 ## Pending features (from the original spec)
-- [ ] **Economy extras** — purchases with coins, poll/activity rewards, admin-configurable reward amounts
-- [ ] **Home activity feed** — recent happenings (posts, plans, tips, wins)
-- [ ] **6. Pets** — admin uploads pets, profiles, feed/treat with daily limits, hunger/happiness
-- [ ] **7. Predictions** — friendly markets, stake bingdons, server settlement, creator/admin resolves
-- [ ] **8b. Chess** (multiplayer)
-- [ ] **9b. Location** — opt-in, approximate or precise, off by default, pause + auto-expiry, visible indicator
-- [ ] **10. Admin dashboard** — admin mode exists (features, questions). Still to add: roommates, pets, rewards, polls, moderation, logs, timezone + reset time
+None. Everything in the original spec is built.
 
 ## Hardening / loose ends
 - [ ] Turn off public sign-ups in Supabase (dashboard setting, user action)
 - [x] Personal 6-digit login codes (shared PIN retired after it was abused)
-- [ ] Change-your-own-code screen
-- [ ] Set the real household timezone (placeholder is America/New_York)
-- [ ] Error boundaries, loading + empty states audit
-- [ ] Drop the unused invites table / functions
-- [ ] Polish: animations, confetti, dark/light toggle
+- [x] Household timezone is America/New_York (Eastern, handles EST/EDT); editable in admin settings
+- [x] Error boundaries and 404 screens; layouts audited by the browser tests
+- [ ] More celebration animations (confetti only for the Thursday winner today)

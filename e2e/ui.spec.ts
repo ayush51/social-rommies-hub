@@ -26,6 +26,7 @@ const PAGES: [string, string][] = [
   ["/admin/pets", "Pets"],
   ["/pets", "Pets"],
   ["/games/chess", "Chess"],
+  ["/location", "Location"],
 ];
 
 function watch(page: Page) {
@@ -109,7 +110,7 @@ test("login form: name tiles, 6-digit limit, wrong code, right code", async ({ p
   record(info.project.name, { kind: "login", loginMs: Date.now() - t0 });
 });
 
-test("status: select does nothing until Set status; set and clear", async ({ page, context }, info) => {
+test("status: select does nothing until Set status; set and clear @stateful", async ({ page, context }, info) => {
   // every device project shares one account, so only one runs this to avoid racing itself
   test.skip(info.project.name !== "iphone-portrait", "mutates the shared account's status");
   await signInAs(context, "ayush");

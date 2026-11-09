@@ -25,7 +25,9 @@ async function stopIfSharing(page: Page) {
   await expect(page.getByRole("heading", { name: "Start sharing" })).toBeVisible({ timeout: 10_000 });
 }
 
-test("location page: audit, no geolocation before the tap, start -> pill -> pause -> stop", async ({ page, context }, info) => {
+test("location page: audit, no geolocation before the tap, start -> pill -> pause -> stop @stateful", async ({ page, context }, info) => {
+  // both tests share one user's single location row, so only one device runs them (layouts are audited for all devices in ui.spec.ts)
+  test.skip(info.project.name !== "iphone-portrait", "shared account and row");
   await signInAs(context, "ayush");
   await page.addInitScript(() => {
     const w = window as unknown as { __geoCalls: number };
@@ -85,7 +87,8 @@ test("location page: audit, no geolocation before the tap, start -> pill -> paus
   }
 });
 
-test("pill stop works from another page", async ({ page, context }) => {
+test("pill stop works from another page @stateful", async ({ page, context }, info) => {
+  test.skip(info.project.name !== "iphone-portrait", "shared account and row");
   await signInAs(context, "ayush");
   try {
     await stopIfSharing(page);
