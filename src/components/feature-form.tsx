@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const field = "w-full rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800";
+const field = "w-full rounded-2xl bg-white px-3 py-3 text-sm dark:bg-neutral-800";
 
 export function FeatureForm({ householdId, userId }: { householdId: string; userId: string }) {
   const router = useRouter();

@@ -71,7 +71,7 @@ export function NotificationBell() {
   const Icon = state === "on" ? BellRing : state === "denied" ? BellOff : Bell;
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} aria-label="Notifications" className="relative rounded-full p-2 active:scale-95">
+      <button onClick={() => setOpen(!open)} aria-label="Notifications" className="relative flex h-11 w-11 items-center justify-center rounded-full active:scale-95">
         <Icon size={22} className={state === "on" ? "text-violet-600 dark:text-violet-400" : "text-neutral-500"} />
         {state === "off" && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-violet-600" />}
       </button>
@@ -81,13 +81,13 @@ export function NotificationBell() {
           {state === "on" && (
             <>
               <p className="mt-1 text-neutral-500">On for this device: new messages, plans and daily photos.</p>
-              <button onClick={disable} disabled={busy} className="mt-3 rounded-2xl bg-neutral-100 px-4 py-2 font-semibold dark:bg-neutral-800">Turn off</button>
+              <button onClick={disable} disabled={busy} className="mt-3 rounded-2xl bg-neutral-100 px-4 py-3 font-semibold dark:bg-neutral-800">Turn off</button>
             </>
           )}
           {state === "off" && (
             <>
               <p className="mt-1 text-neutral-500">Get pinged for messages, plans and daily photos.</p>
-              <button onClick={enable} disabled={busy} className="mt-3 rounded-2xl bg-violet-600 px-4 py-2 font-semibold text-white disabled:opacity-60">
+              <button onClick={enable} disabled={busy} className="mt-3 rounded-2xl bg-violet-600 px-4 py-3 font-semibold text-white disabled:opacity-60">
                 {busy ? "Turning on…" : "Turn on notifications"}
               </button>
             </>

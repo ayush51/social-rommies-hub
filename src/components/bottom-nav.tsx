@@ -15,19 +15,19 @@ const items = [
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/90">
-      <ul className="mx-auto flex max-w-md justify-around">
+    <nav className="fixed inset-x-0 bottom-0 border-t border-neutral-200 bg-white pb-[max(env(safe-area-inset-bottom),0.75rem)] dark:border-neutral-800 dark:bg-neutral-950">
+      <ul className="mx-auto flex max-w-md">
         {items.map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
-            <li key={href}>
+            <li key={href} className="flex-1">
               <Link
                 href={href}
-                className={`flex flex-col items-center gap-0.5 px-4 py-2 text-xs ${
+                className={`flex min-h-16 flex-col items-center justify-center gap-1 pt-1 text-xs font-medium active:bg-neutral-100 dark:active:bg-neutral-900 ${
                   active ? "text-violet-600 dark:text-violet-400" : "text-neutral-500"
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+                <Icon size={24} strokeWidth={active ? 2.5 : 2} />
                 {label}
               </Link>
             </li>

@@ -11,7 +11,7 @@ const DAYS = [
   { value: 3, label: "Wednesday" },
   { value: 4, label: "Thursday" },
 ];
-const field = "rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800";
+const field = "rounded-2xl bg-white px-3 py-3 text-sm dark:bg-neutral-800";
 
 export function PollAdmin({ householdId, dishes, poll }: { householdId: string; dishes: Dish[]; poll: ThursdayPoll }) {
   const router = useRouter();
@@ -48,7 +48,7 @@ export function PollAdmin({ householdId, dishes, poll }: { householdId: string; 
 
   return (
     <details className="mt-8 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
-      <summary className="cursor-pointer font-semibold">Admin: dishes and settings</summary>
+      <summary className="cursor-pointer py-3 font-semibold">Admin: dishes and settings</summary>
       <form onSubmit={addDish} className="mt-3 flex gap-2">
         <input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} placeholder="Add a dish" className={`${field} min-w-0 flex-1`} />
         <button className="rounded-2xl bg-violet-600 px-4 text-sm font-semibold text-white">Add</button>
@@ -57,7 +57,7 @@ export function PollAdmin({ householdId, dishes, poll }: { householdId: string; 
         {dishes.map((d) => (
           <li key={d.id} className="flex items-center justify-between">
             <span className={d.active ? "" : "text-neutral-400 line-through"}>{d.name}</span>
-            <button onClick={() => toggle(d)} className="text-neutral-500 underline">{d.active ? "Retire" : "Bring back"}</button>
+            <button onClick={() => toggle(d)} className="min-h-11 px-2 text-neutral-500 underline">{d.active ? "Retire" : "Bring back"}</button>
           </li>
         ))}
       </ul>
@@ -66,12 +66,12 @@ export function PollAdmin({ householdId, dishes, poll }: { householdId: string; 
           <input value={cook} onChange={(e) => setCook(e.target.value)} maxLength={30} className={`${field} mt-1 w-full font-normal`} />
         </label>
         <label className="text-xs font-semibold">Poll locks
-          <select value={dow} onChange={(e) => setDow(e.target.value)} className={`${field} mt-1 w-full font-normal`}>
+          <select value={dow} onChange={(e) => setDow(e.target.value)} className={`${field} h-11 mt-1 w-full font-normal`}>
             {DAYS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
           </select>
         </label>
         <label className="text-xs font-semibold">At
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={`${field} mt-1 w-full font-normal`} />
+          <input aria-label="Lock time" type="time" value={time} onChange={(e) => setTime(e.target.value)} className={`${field} mt-1 w-full font-normal`} />
         </label>
         <button className="col-span-2 rounded-2xl bg-violet-600 py-2 text-sm font-semibold text-white">Save settings</button>
       </form>

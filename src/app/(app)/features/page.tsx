@@ -28,7 +28,7 @@ export default async function FeaturesPage() {
   return (
     <>
       {(["feature_requests", "feature_votes"] as const).map((t) => <LiveRefresh key={t} table={t} householdId={me.householdId} />)}
-      <Link href="/" className="text-sm text-violet-600 dark:text-violet-400">Home</Link>
+      <Link href="/" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">Home</Link>
       <h1 className="mb-4 mt-2 text-3xl font-bold tracking-tight">Feature ideas</h1>
       <FeatureForm householdId={me.householdId} userId={me.userId} />
 

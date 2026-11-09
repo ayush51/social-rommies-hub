@@ -31,7 +31,7 @@ export default async function FeaturePage({ params }: { params: Promise<{ id: st
   return (
     <>
       {(["feature_requests", "feature_votes", "feature_comments"] as const).map((t) => <LiveRefresh key={t} table={t} householdId={me.householdId} />)}
-      <Link href="/features" className="text-sm text-violet-600 dark:text-violet-400">All ideas</Link>
+      <Link href="/features" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">All ideas</Link>
       <div className="mt-2 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold leading-tight tracking-tight">{request.title}</h1>

@@ -45,11 +45,27 @@ The script is idempotent. In the Supabase dashboard, turn **off**
 RLS tests run against the linked database inside a block that always rolls back:
 
 ```bash
-for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push rls_cards rls_thursday rls_reminders rls_rally rls_predictions rls_features; do supabase db query --linked -f supabase/tests/$f.sql; done
+for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push rls_cards rls_thursday rls_reminders rls_rally rls_predictions rls_features rls_dm rls_monopoly; do supabase db query --linked -f supabase/tests/$f.sql; done
 ```
 
 Passing looks like an error whose message is `ALL RLS TESTS PASSED (rolled back)`.
 Any `FAIL:` message is a real failure.
+
+## UI tests (Playwright)
+
+Browser tests run real WebKit (iPhone) and Chromium engines on five screen sizes (iPhone portrait/landscape, small iPhone, Pixel, desktop).
+They check every page for overflow, tap-target sizes, controls hidden behind the bottom bar, console errors, missing labels and timings,
+and exercise login, status, chat, the admin lock and rotation. They never send chat messages or anything that notifies the house.
+Login codes come from the environment, never the repo:
+
+```bash
+pnpm exec playwright install chromium webkit      # once
+set -a && . ./.env.local && set +a
+E2E_AYUSH=<admin code> E2E_TYLER=<member code> pnpm exec playwright test
+# BASE_URL=http://localhost:3000 to test a local build instead of production
+```
+
+Screenshots land in `e2e/screens/` and metrics in `e2e/report/` (both git-ignored).
 
 ## Scheduled reminders
 

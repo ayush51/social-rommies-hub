@@ -39,7 +39,7 @@ export default async function PredictionsPage() {
       {(["markets", "market_bets"] as const).map((t) => <LiveRefresh key={t} table={t} householdId={me.householdId} />)}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Predictions</h1>
-        <Link href="/predictions/new" className="flex items-center gap-1 rounded-full bg-violet-600 px-4 py-2 text-sm font-semibold text-white"><Plus size={16} /> New</Link>
+        <Link href="/predictions/new" className="flex items-center gap-1 rounded-full bg-violet-600 px-4 py-3 text-sm font-semibold text-white"><Plus size={16} /> New</Link>
       </div>
       <p className="mt-1 text-sm text-neutral-500">Bet bingdons on what happens. Winners split the pool.</p>
 

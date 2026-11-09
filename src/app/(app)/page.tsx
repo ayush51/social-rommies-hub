@@ -19,30 +19,38 @@ import { createClient } from "@/lib/supabase/server";
 export default async function HomePage() {
   const me = await getMe();
   const supabase = await createClient();
-  const { data: members } = await supabase
-    .from("household_members")
-    .select("user_id, profiles(display_name, nickname, avatar_url, last_seen_at)");
-  const { data: statuses } = await supabase
-    .from("statuses")
-    .select("user_id, kind, label, expires_at")
-    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+  // Independent reads run together: Home used to wait on ten round trips one after another.
+  const nowIso = new Date().toISOString();
+  const [
+    { data: members },
+    { data: statuses },
+    { data: nextPlans },
+    { data: card },
+    { data: pollRaw },
+    { data: pastRaw },
+    { count: openMarkets },
+    { count: posted },
+  ] = await Promise.all([
+    supabase.from("household_members").select("user_id, profiles(display_name, nickname, avatar_url, last_seen_at)"),
+    supabase.from("statuses").select("user_id, kind, label, expires_at").or(`expires_at.is.null,expires_at.gt.${nowIso}`),
+    supabase
+      .from("plans")
+      .select("id, title, starts_at")
+      .eq("status", "scheduled")
+      .gte("starts_at", new Date(nowMs() - 2 * 3600_000).toISOString())
+      .order("starts_at")
+      .limit(3),
+    supabase.rpc("card_today"),
+    supabase.rpc("thursday_poll"),
+    supabase.rpc("card_past", { p_days: 7 }),
+    supabase.from("markets").select("id", { count: "exact", head: true }).eq("status", "open"),
+    supabase.from("daily_posts").select("id", { count: "exact", head: true }),
+  ]);
   const byUser = new Map(statuses?.map((s) => [s.user_id, s]));
   const mine = byUser.get(me.userId);
-  const { data: nextPlans } = await supabase
-    .from("plans")
-    .select("id, title, starts_at")
-    .eq("status", "scheduled")
-    .gte("starts_at", new Date(nowMs() - 2 * 3600_000).toISOString())
-    .order("starts_at")
-    .limit(3);
   const avatars = await signedUrls((members ?? []).map((m) => m.profiles?.avatar_url ?? null), "avatars");
-  const { data: card } = await supabase.rpc("card_today");
-  const { data: pollRaw } = await supabase.rpc("thursday_poll");
   const poll = pollRaw as unknown as ThursdayPoll | null;
-  const { data: pastRaw } = await supabase.rpc("card_past", { p_days: 7 });
   const past = (pastRaw ?? []) as unknown as CardPast;
-  const { count: openMarkets } = await supabase.from("markets").select("id", { count: "exact", head: true }).eq("status", "open");
-  const { count: posted } = await supabase.from("daily_posts").select("id", { count: "exact", head: true });
 
   return (
     <>
@@ -76,13 +84,13 @@ export default async function HomePage() {
       <section className="mt-6 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
         <div className="flex items-baseline justify-between">
           <h2 className="font-semibold">Coming up</h2>
-          <Link href="/plans" className="text-sm text-violet-600 dark:text-violet-400">All plans</Link>
+          <Link href="/plans" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">All plans</Link>
         </div>
         {nextPlans?.length ? (
           <ul className="mt-2 space-y-1 text-sm">
             {nextPlans.map((p) => (
               <li key={p.id}>
-                <Link href={`/plans/${p.id}`} className="flex justify-between">
+                <Link href={`/plans/${p.id}`} className="flex min-h-11 items-center justify-between">
                   <span className="font-medium">{p.title}</span>
                   <span className="text-neutral-500"><LocalTime iso={p.starts_at} /></span>
                 </Link>
@@ -117,7 +125,7 @@ export default async function HomePage() {
           );
         })}
       </ul>
-      <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 text-sm text-neutral-500">
+      <div className="mt-8 flex flex-wrap gap-x-2 text-sm text-neutral-500 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:px-2 [&_button]:min-h-11 [&_button]:px-2">
         <Link href="/features">Suggest a feature</Link>
         {me.isAdmin && <Link href="/admin" className="font-semibold text-violet-600 dark:text-violet-400">Admin mode</Link>}
         <Link href="/profile">Edit profile</Link>

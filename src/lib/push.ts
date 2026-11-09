@@ -2,7 +2,7 @@ import "server-only";
 import { sendNotification, setVapidDetails } from "web-push";
 import { createClient } from "@/lib/supabase/server";
 
-export type PushKind = "message" | "plan" | "post" | "rally" | "market";
+export type PushKind = "message" | "plan" | "post" | "rally" | "market" | "game";
 
 // The database decides who may be notified (author-only, fresh, once); this only signs and sends.
 // Returns how many devices accepted the notification.

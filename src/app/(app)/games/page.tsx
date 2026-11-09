@@ -19,6 +19,10 @@ export default async function GamesPage() {
         <span className="text-lg font-bold tabular-nums">I have {balance ?? 0} {balance === 1 ? "bingdon" : "bingdons"}</span>
       </Link>
 
+      <Link href="/games/monopoly" className="mt-3 flex min-h-11 items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
+        <span className="font-semibold">Abingdon Street</span>
+        <span className="text-sm text-neutral-500">Monopoly with a bingdon pot</span>
+      </Link>
       <Link href="/predictions" className="mt-3 flex items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
         <span className="font-semibold">Predictions</span>
         <span className="text-sm text-neutral-500">Bet bingdons on what happens</span>
@@ -59,7 +63,7 @@ export default async function GamesPage() {
       </div>
 
       <h2 className="mt-8 font-semibold">Coming soon</h2>
-      <p className="mt-1 text-sm text-neutral-500">Chess and a property game.</p>
+      <p className="mt-1 text-sm text-neutral-500">Chess.</p>
     </>
   );
 }

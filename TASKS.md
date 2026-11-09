@@ -18,15 +18,17 @@ Each phase is independently testable and ships only the tables it needs. `[x]` d
 - [x] **9c. Feature requests** — propose / vote / comment, admin mode review (proposed → approved → building → shipped / rejected), Claude Code prompt generator + `scripts/feature-prompt.ts`
 - [x] **Suggested daily-card questions** — Home-only form, admin approval, approved ones used first and credited; each day's question is stored; past questions on Home
 - [x] **Predictions** — hosted markets with a resolver, bets in bingdons, exact payouts, refunds, resolver reminder
+- [x] **Chat upgrades** — DMs (private incl. photos + reactions), 8-emoji picker with who-reacted, replies, photos from camera/library
+- [x] **8c. Abingdon Street (Monopoly-style)** — turn-based, 2-6 players, bingdon buy-in + pot, server-rolled dice, rent/sets/upgrades/jail/cards/bankruptcy, push on your turn, idle skip
+- [x] **UI test suite** (Playwright, 5 screen sizes) + error/404 screens
 - [x] **Rally** — separate Home section, posts "who's in?" to chat
 
 ## Pending features (from the original spec)
-- [ ] **Chat photos** (needs a chat-photos bucket)
 - [ ] **Economy extras** — purchases with coins, poll/activity rewards, admin-configurable reward amounts
 - [ ] **Home activity feed** — recent happenings (posts, plans, tips, wins)
 - [ ] **6. Pets** — admin uploads pets, profiles, feed/treat with daily limits, hunger/happiness
 - [ ] **7. Predictions** — friendly markets, stake bingdons, server settlement, creator/admin resolves
-- [ ] **8b. Chess** (multiplayer) and **8c. property game** (original theme)
+- [ ] **8b. Chess** (multiplayer)
 - [ ] **9b. Location** — opt-in, approximate or precise, off by default, pause + auto-expiry, visible indicator
 - [ ] **10. Admin dashboard** — admin mode exists (features, questions). Still to add: roommates, pets, rewards, polls, moderation, logs, timezone + reset time
 

@@ -36,7 +36,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
   return (
     <>
       {(["markets", "market_bets"] as const).map((t) => <LiveRefresh key={t} table={t} householdId={me.householdId} />)}
-      <Link href="/predictions" className="text-sm text-violet-600 dark:text-violet-400">Predictions</Link>
+      <Link href="/predictions" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">Predictions</Link>
       <h1 className="mt-2 text-2xl font-bold leading-tight tracking-tight">{market.question}</h1>
       {market.description && <p className="mt-2 text-neutral-600 dark:text-neutral-400">{market.description}</p>}
       <p className="mt-2 text-sm text-neutral-500">

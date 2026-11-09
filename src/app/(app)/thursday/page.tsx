@@ -18,7 +18,7 @@ export default async function ThursdayPage() {
 
   return (
     <>
-      <Link href="/" className="text-sm text-violet-600 dark:text-violet-400">Home</Link>
+      <Link href="/" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">Home</Link>
       <h1 className="mt-2 text-3xl font-bold tracking-tight">Thirsty Thursday</h1>
 
       {poll.phase === "open" && (

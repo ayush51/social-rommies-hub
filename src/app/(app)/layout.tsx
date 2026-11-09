@@ -16,7 +16,7 @@ async function MembershipGate({ children }: { children: React.ReactNode }) {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-4 pb-24 pt-3">
+    <div className="mx-auto min-h-dvh w-full max-w-md pb-32 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-3">
       <header className="mb-2 flex justify-end">
         <NotificationBell />
       </header>

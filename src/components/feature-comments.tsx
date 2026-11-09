@@ -38,7 +38,7 @@ export function FeatureComments({ requestId, householdId, userId, isAdmin, names
           <li key={c.id} className="flex items-start justify-between gap-2">
             <span><b>{names[c.user_id]}</b> {c.body}</span>
             {(c.user_id === userId || isAdmin) && (
-              <button aria-label="Delete comment" className="text-neutral-400" onClick={async () => { await createClient().from("feature_comments").delete().eq("id", c.id); router.refresh(); }}>
+              <button aria-label="Delete comment" className="flex h-11 w-11 shrink-0 items-center justify-center text-neutral-400" onClick={async () => { await createClient().from("feature_comments").delete().eq("id", c.id); router.refresh(); }}>
                 <Trash2 size={14} />
               </button>
             )}

@@ -41,7 +41,7 @@ export default async function PlansPage() {
       <LiveRefresh table="plan_rsvps" householdId={me.householdId} />
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Plans</h1>
-        <Link href="/plans/new" className="flex items-center gap-1 rounded-full bg-violet-600 px-4 py-2 text-sm font-semibold text-white">
+        <Link href="/plans/new" className="flex items-center gap-1 rounded-full bg-violet-600 px-4 py-3 text-sm font-semibold text-white">
           <Plus size={16} /> New
         </Link>
       </div>

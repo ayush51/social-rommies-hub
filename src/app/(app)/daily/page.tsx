@@ -42,7 +42,7 @@ export default async function DailyPage() {
       ))}
       <div className="flex items-baseline justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Daily</h1>
-        <Link href="/daily/memories" className="text-sm text-violet-600 dark:text-violet-400">Memories</Link>
+        <Link href="/daily/memories" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">Memories</Link>
       </div>
       <div className="mt-4">
         <PostComposer

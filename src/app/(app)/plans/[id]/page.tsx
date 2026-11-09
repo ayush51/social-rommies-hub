@@ -37,7 +37,7 @@ export default async function PlanPage({ params }: { params: Promise<{ id: strin
       {(["plans", "plan_rsvps", "plan_comments"] as const).map((t) => (
         <LiveRefresh key={t} table={t} householdId={me.householdId} />
       ))}
-      <Link href="/plans" className="text-sm text-violet-600 dark:text-violet-400">All plans</Link>
+      <Link href="/plans" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">All plans</Link>
       <h1 className={`mt-2 text-3xl font-bold tracking-tight ${plan.status === "cancelled" ? "line-through opacity-60" : ""}`}>{plan.title}</h1>
       <p className="mt-1 text-neutral-500">
         <LocalTime iso={plan.starts_at} />{plan.location && ` · ${plan.location}`}
@@ -64,7 +64,7 @@ export default async function PlanPage({ params }: { params: Promise<{ id: strin
       {canManage && (
         <div className="mt-8 space-y-4">
           <details className="rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
-            <summary className="cursor-pointer font-semibold">Edit plan</summary>
+            <summary className="cursor-pointer py-3 font-semibold">Edit plan</summary>
             <div className="mt-3"><PlanForm householdId={me.householdId} userId={me.userId} plan={plan} /></div>
           </details>
           <PlanStatusButton planId={plan.id} status={plan.status} />

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 // Short-lived signed URLs for private storage paths.
-export async function signedUrls(paths: (string | null)[], bucket: "daily" | "avatars" = "daily") {
+export async function signedUrls(paths: (string | null)[], bucket: "daily" | "avatars" | "chat" = "daily") {
   const wanted = [...new Set(paths.filter((p): p is string => !!p))];
   const map = new Map<string, string>();
   if (!wanted.length) return map;

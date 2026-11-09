@@ -24,7 +24,7 @@ export function SuggestQuestion() {
 
   return (
     <details className="mt-3 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
-      <summary className="cursor-pointer text-sm font-semibold">Suggest a question</summary>
+      <summary className="cursor-pointer py-3 text-sm font-semibold">Suggest a question</summary>
       <p className="mt-2 text-sm text-neutral-500">{PREFIX}…</p>
       <form onSubmit={(e) => { e.preventDefault(); if (text.trim().length > 2) send(); }} className="mt-1 flex gap-2">
         <input value={text} onChange={(e) => setText(e.target.value)} maxLength={110} placeholder="eat the last slice and blame the dog?" className="min-w-0 flex-1 rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800" />

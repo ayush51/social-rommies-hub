@@ -34,7 +34,7 @@ export function FeatureAdmin({ id, status: initial, note: initialNote, request }
       </div>
       <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} placeholder="Note to the house (optional)" className="w-full rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800" />
       <div className="flex items-center gap-3">
-        <button disabled={pending} onClick={save} className="rounded-2xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">Save</button>
+        <button disabled={pending} onClick={save} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60">Save</button>
         <button onClick={() => setShowPrompt(!showPrompt)} className="text-sm text-violet-600 underline dark:text-violet-400">{showPrompt ? "Hide" : "Claude Code prompt"}</button>
         {msg && <span className="text-sm text-neutral-500">{msg}</span>}
       </div>

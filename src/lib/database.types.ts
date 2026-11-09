@@ -803,6 +803,9 @@ export type Database = {
           created_at: string
           household_id: string
           id: string
+          image_path: string | null
+          recipient_id: string | null
+          reply_to: string | null
           user_id: string
         }
         Insert: {
@@ -810,6 +813,9 @@ export type Database = {
           created_at?: string
           household_id: string
           id?: string
+          image_path?: string | null
+          recipient_id?: string | null
+          reply_to?: string | null
           user_id: string
         }
         Update: {
@@ -817,6 +823,9 @@ export type Database = {
           created_at?: string
           household_id?: string
           id?: string
+          image_path?: string | null
+          recipient_id?: string | null
+          reply_to?: string | null
           user_id?: string
         }
         Relationships: [
@@ -828,6 +837,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "messages_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -835,6 +858,313 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      monopoly_events: {
+        Row: {
+          actor: string | null
+          created_at: string
+          game_id: string
+          household_id: string
+          id: string
+          notify_mode: string
+          notify_user: string | null
+          seq: number
+          text: string
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          game_id: string
+          household_id: string
+          id?: string
+          notify_mode?: string
+          notify_user?: string | null
+          seq?: never
+          text: string
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          game_id?: string
+          household_id?: string
+          id?: string
+          notify_mode?: string
+          notify_user?: string | null
+          seq?: never
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monopoly_events_actor_fkey"
+            columns: ["actor"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_events_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "monopoly_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_events_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_events_notify_user_fkey"
+            columns: ["notify_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monopoly_games: {
+        Row: {
+          buy_in: number
+          created_at: string
+          current_seat: number | null
+          doubles: number
+          finished_at: string | null
+          host_id: string
+          household_id: string
+          id: string
+          last_actor: string | null
+          last_dice: number[] | null
+          max_players: number
+          started_at: string | null
+          status: string
+          turn_no: number
+          turn_phase: string
+          turn_started_at: string | null
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          buy_in: number
+          created_at?: string
+          current_seat?: number | null
+          doubles?: number
+          finished_at?: string | null
+          host_id: string
+          household_id: string
+          id?: string
+          last_actor?: string | null
+          last_dice?: number[] | null
+          max_players: number
+          started_at?: string | null
+          status?: string
+          turn_no?: number
+          turn_phase?: string
+          turn_started_at?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          buy_in?: number
+          created_at?: string
+          current_seat?: number | null
+          doubles?: number
+          finished_at?: string | null
+          host_id?: string
+          household_id?: string
+          id?: string
+          last_actor?: string | null
+          last_dice?: number[] | null
+          max_players?: number
+          started_at?: string | null
+          status?: string
+          turn_no?: number
+          turn_phase?: string
+          turn_started_at?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monopoly_games_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_games_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_games_last_actor_fkey"
+            columns: ["last_actor"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_games_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monopoly_players: {
+        Row: {
+          bankrupt: boolean
+          cash: number
+          game_id: string
+          household_id: string
+          idle_skips: number
+          in_jail: boolean
+          jail_turns: number
+          joined_at: string
+          position: number
+          seat: number
+          user_id: string
+        }
+        Insert: {
+          bankrupt?: boolean
+          cash?: number
+          game_id: string
+          household_id: string
+          idle_skips?: number
+          in_jail?: boolean
+          jail_turns?: number
+          joined_at?: string
+          position?: number
+          seat: number
+          user_id: string
+        }
+        Update: {
+          bankrupt?: boolean
+          cash?: number
+          game_id?: string
+          household_id?: string
+          idle_skips?: number
+          in_jail?: boolean
+          jail_turns?: number
+          joined_at?: string
+          position?: number
+          seat?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monopoly_players_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "monopoly_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_players_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_players_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monopoly_props: {
+        Row: {
+          game_id: string
+          household_id: string
+          level: number
+          owner_id: string
+          space: number
+        }
+        Insert: {
+          game_id: string
+          household_id: string
+          level?: number
+          owner_id: string
+          space: number
+        }
+        Update: {
+          game_id?: string
+          household_id?: string
+          level?: number
+          owner_id?: string
+          space?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monopoly_props_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "monopoly_games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_props_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_props_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monopoly_props_space_fkey"
+            columns: ["space"]
+            isOneToOne: false
+            referencedRelation: "monopoly_spaces"
+            referencedColumns: ["idx"]
+          },
+        ]
+      }
+      monopoly_spaces: {
+        Row: {
+          amount: number | null
+          color: string | null
+          idx: number
+          kind: string
+          name: string
+          price: number | null
+          rent: number[] | null
+          upgrade_cost: number | null
+        }
+        Insert: {
+          amount?: number | null
+          color?: string | null
+          idx: number
+          kind: string
+          name: string
+          price?: number | null
+          rent?: number[] | null
+          upgrade_cost?: number | null
+        }
+        Update: {
+          amount?: number | null
+          color?: string | null
+          idx?: number
+          kind?: string
+          name?: string
+          price?: number | null
+          rent?: number[] | null
+          upgrade_cost?: number | null
+        }
+        Relationships: []
       }
       plan_comments: {
         Row: {
@@ -1445,6 +1775,113 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      mono_advance: { Args: { p_game: string }; Returns: string }
+      mono_after_bankrupt: {
+        Args: { p_game: string; p_user: string }
+        Returns: string
+      }
+      mono_buy: {
+        Args: { p_buy: boolean; p_game: string; p_user: string }
+        Returns: string
+      }
+      mono_end_turn: {
+        Args: { p_game: string; p_user: string }
+        Returns: string
+      }
+      mono_finish_if_won: { Args: { p_game: string }; Returns: string }
+      mono_log: {
+        Args: {
+          p_actor: string
+          p_game: string
+          p_mode?: string
+          p_text: string
+          p_user?: string
+        }
+        Returns: string
+      }
+      mono_name: { Args: { u: string }; Returns: string }
+      mono_pass_turn: {
+        Args: { p_actor: string; p_game: string; p_text: string }
+        Returns: string
+      }
+      mono_pay: {
+        Args: {
+          p_amount: number
+          p_creditor: string
+          p_debtor: string
+          p_game: string
+        }
+        Returns: boolean
+      }
+      mono_pay_jail: {
+        Args: { p_game: string; p_user: string }
+        Returns: string
+      }
+      mono_refund: {
+        Args: {
+          p_amount: number
+          p_game: string
+          p_hid: string
+          p_user: string
+        }
+        Returns: undefined
+      }
+      mono_rent: {
+        Args: {
+          p_dice: number
+          p_game: string
+          p_owner: string
+          p_space: number
+        }
+        Returns: number
+      }
+      mono_resign: { Args: { p_game: string; p_user: string }; Returns: string }
+      mono_roll: {
+        Args: {
+          d1: number
+          d2: number
+          p_card: number
+          p_game: string
+          p_user: string
+        }
+        Returns: string
+      }
+      mono_skip: { Args: { p_caller: string; p_game: string }; Returns: string }
+      mono_stake: {
+        Args: {
+          p_amount: number
+          p_game: string
+          p_hid: string
+          p_user: string
+        }
+        Returns: undefined
+      }
+      mono_turn: {
+        Args: { p_game: string; p_phases: string[]; p_user: string }
+        Returns: undefined
+      }
+      mono_upgrade: {
+        Args: { p_game: string; p_space: number; p_user: string }
+        Returns: string
+      }
+      monopoly_buy: { Args: { p_buy: boolean; p_game: string }; Returns: Json }
+      monopoly_cancel: { Args: { p_game: string }; Returns: Json }
+      monopoly_create: {
+        Args: { p_buy_in: number; p_max: number }
+        Returns: Json
+      }
+      monopoly_end_turn: { Args: { p_game: string }; Returns: Json }
+      monopoly_join: { Args: { p_game: string }; Returns: Json }
+      monopoly_leave: { Args: { p_game: string }; Returns: Json }
+      monopoly_pay_jail: { Args: { p_game: string }; Returns: Json }
+      monopoly_resign: { Args: { p_game: string }; Returns: Json }
+      monopoly_roll: { Args: { p_game: string }; Returns: Json }
+      monopoly_skip: { Args: { p_game: string }; Returns: Json }
+      monopoly_start: { Args: { p_game: string }; Returns: Json }
+      monopoly_upgrade: {
+        Args: { p_game: string; p_space: number }
+        Returns: Json
       }
       my_wallet: { Args: never; Returns: number }
       pick_card: { Args: { p_pick: string }; Returns: undefined }

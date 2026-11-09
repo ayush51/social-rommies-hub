@@ -12,7 +12,7 @@ const toLocalInput = (iso: string) => {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 };
 
-const field = "w-full rounded-2xl bg-white px-3 py-2 dark:bg-neutral-800";
+const field = "w-full rounded-2xl bg-white px-3 py-3 dark:bg-neutral-800";
 
 export function PlanForm({ householdId, userId, plan }: { householdId: string; userId: string; plan?: Plan }) {
   const router = useRouter();
@@ -57,7 +57,7 @@ export function PlanForm({ householdId, userId, plan }: { householdId: string; u
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={80} placeholder="What's the plan?" className={field} />
-      <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className={field} />
+      <input aria-label="Starts at" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className={field} />
       <input value={location} onChange={(e) => setLocation(e.target.value)} maxLength={120} placeholder="Where" className={field} />
       <textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} rows={3} placeholder="Details" className={field} />
       {error && <p className="text-sm text-red-500">{error}</p>}

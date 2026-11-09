@@ -49,7 +49,7 @@ export function StatusPanel({ current }: { current?: string }) {
       <div className="flex items-center justify-between">
         <h2 className="font-semibold">What are you up to?</h2>
         {current && (
-          <button onClick={() => start(() => clearStatus())} className="flex items-center gap-1 text-sm text-neutral-500">
+          <button onClick={() => start(() => clearStatus())} className="flex min-h-11 items-center gap-1 text-sm text-neutral-500">
             <X size={14} /> Clear
           </button>
         )}
@@ -93,7 +93,7 @@ export function StatusPanel({ current }: { current?: string }) {
             value={hours}
             onChange={(e) => setHours(e.target.value)}
             aria-label="Expires"
-            className="rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800"
+            className="h-11 rounded-2xl bg-white px-3 text-sm dark:bg-neutral-800"
           >
             {EXPIRY_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>

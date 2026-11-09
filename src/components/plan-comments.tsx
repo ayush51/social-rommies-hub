@@ -37,7 +37,7 @@ export function PlanComments({ planId, householdId, userId, isAdmin, names, comm
           <li key={c.id} className="flex items-start justify-between gap-2">
             <span><b>{names[c.user_id]}</b> {c.body}</span>
             {(c.user_id === userId || isAdmin) && (
-              <button onClick={() => remove(c.id)} aria-label="Delete comment" className="text-neutral-400"><Trash2 size={14} /></button>
+              <button onClick={() => remove(c.id)} aria-label="Delete comment" className="flex h-11 w-11 shrink-0 items-center justify-center text-neutral-400"><Trash2 size={14} /></button>
             )}
           </li>
         ))}

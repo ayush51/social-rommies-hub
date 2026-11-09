@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   icons: { apple: "/icons/180" },
 };
 
-export const viewport: Viewport = { themeColor: "#7c3aed" };
+export const viewport: Viewport = { themeColor: "#7c3aed", viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

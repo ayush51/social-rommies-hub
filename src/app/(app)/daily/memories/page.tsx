@@ -16,7 +16,7 @@ export default async function MemoriesPage() {
 
   return (
     <>
-      <Link href="/daily" className="text-sm text-violet-600 dark:text-violet-400">Back to today</Link>
+      <Link href="/daily" className="inline-flex min-h-11 min-w-11 items-center text-sm text-violet-600 dark:text-violet-400">Back to today</Link>
       <h1 className="mt-2 text-3xl font-bold tracking-tight">Memories</h1>
       {days.size === 0 && <p className="mt-2 text-neutral-500">Nothing yet. Yesterday&apos;s photos land here.</p>}
       {[...days].map(([date, items]) => (

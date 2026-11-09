@@ -7,7 +7,7 @@ import { notify } from "@/app/(app)/push-actions";
 import { createClient } from "@/lib/supabase/client";
 
 type Member = { id: string; name: string };
-const field = "w-full rounded-2xl bg-white px-3 py-2 text-sm dark:bg-neutral-800";
+const field = "w-full rounded-2xl bg-white px-3 py-3 text-sm dark:bg-neutral-800";
 
 const toInput = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
@@ -65,15 +65,15 @@ export function NewMarketForm({ members, meId }: { members: Member[]; meId: stri
         <div className="space-y-2">
           {options.map((o, i) => (
             <div key={i} className="flex gap-2">
-              <input value={o} onChange={(e) => setOptions(options.map((x, j) => (j === i ? e.target.value : x)))} maxLength={40} className={field} />
+              <input aria-label={`Option ${i + 1}`} value={o} onChange={(e) => setOptions(options.map((x, j) => (j === i ? e.target.value : x)))} maxLength={40} className={field} />
               {options.length > 2 && (
-                <button type="button" aria-label="Remove option" onClick={() => setOptions(options.filter((_, j) => j !== i))} className="px-2 text-neutral-500"><X size={16} /></button>
+                <button type="button" aria-label="Remove option" onClick={() => setOptions(options.filter((_, j) => j !== i))} className="flex h-11 w-11 items-center justify-center text-neutral-500"><X size={16} /></button>
               )}
             </div>
           ))}
         </div>
         {options.length < 4 && (
-          <button type="button" onClick={() => setOptions([...options, ""])} className="mt-2 flex items-center gap-1 text-sm text-violet-600 dark:text-violet-400"><Plus size={14} /> Add option</button>
+          <button type="button" onClick={() => setOptions([...options, ""])} className="mt-2 flex min-h-11 items-center gap-1 text-sm text-violet-600 dark:text-violet-400"><Plus size={14} /> Add option</button>
         )}
       </div>
 
@@ -81,15 +81,15 @@ export function NewMarketForm({ members, meId }: { members: Member[]; meId: stri
         <p className="mb-1 text-xs font-semibold">Betting closes</p>
         <div className="mb-2 flex flex-wrap gap-2">
           {presets.map((p) => (
-            <button key={p.label} type="button" onClick={() => setCloses(toInput(p.at()))} className="rounded-full bg-neutral-100 px-3 py-1 text-sm dark:bg-neutral-900">{p.label}</button>
+            <button key={p.label} type="button" onClick={() => setCloses(toInput(p.at()))} className="min-h-11 rounded-full bg-neutral-100 px-4 py-2.5 text-sm dark:bg-neutral-900">{p.label}</button>
           ))}
         </div>
-        <input type="datetime-local" value={closes} onChange={(e) => setCloses(e.target.value)} className={field} />
+        <input aria-label="Betting closes" type="datetime-local" value={closes} onChange={(e) => setCloses(e.target.value)} className={field} />
       </div>
 
       <label className="text-xs font-semibold">
         Resolver (decides the outcome, can&apos;t bet)
-        <select value={resolver} onChange={(e) => setResolver(e.target.value)} className={`${field} mt-1 font-normal`}>
+        <select value={resolver} onChange={(e) => setResolver(e.target.value)} className={`${field} h-11 mt-1 font-normal`}>
           {members.map((m) => <option key={m.id} value={m.id}>{m.name}{m.id === meId ? " (me)" : ""}</option>)}
         </select>
       </label>
