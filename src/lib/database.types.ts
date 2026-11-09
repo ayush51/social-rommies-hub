@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_errors: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: number
+          message: string
+          path: string | null
+          ua: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: never
+          message: string
+          path?: string | null
+          ua?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: never
+          message?: string
+          path?: string | null
+          ua?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_errors_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "app_errors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_days: {
         Row: {
           household_id: string
@@ -208,6 +253,108 @@ export type Database = {
           {
             foreignKeyName: "chat_reads_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chess_games: {
+        Row: {
+          black_id: string | null
+          buy_in: number
+          created_at: string
+          draw_offered_by: string | null
+          fen: string
+          finished_at: string | null
+          host_color: string
+          host_id: string
+          household_id: string
+          id: string
+          last_move_at: string | null
+          pgn: string
+          reason: string | null
+          result: string | null
+          started_at: string | null
+          status: string
+          turn: string
+          updated_at: string
+          white_id: string | null
+        }
+        Insert: {
+          black_id?: string | null
+          buy_in: number
+          created_at?: string
+          draw_offered_by?: string | null
+          fen?: string
+          finished_at?: string | null
+          host_color?: string
+          host_id: string
+          household_id: string
+          id?: string
+          last_move_at?: string | null
+          pgn?: string
+          reason?: string | null
+          result?: string | null
+          started_at?: string | null
+          status?: string
+          turn?: string
+          updated_at?: string
+          white_id?: string | null
+        }
+        Update: {
+          black_id?: string | null
+          buy_in?: number
+          created_at?: string
+          draw_offered_by?: string | null
+          fen?: string
+          finished_at?: string | null
+          host_color?: string
+          host_id?: string
+          household_id?: string
+          id?: string
+          last_move_at?: string | null
+          pgn?: string
+          reason?: string | null
+          result?: string | null
+          started_at?: string | null
+          status?: string
+          turn?: string
+          updated_at?: string
+          white_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chess_games_black_id_fkey"
+            columns: ["black_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chess_games_draw_offered_by_fkey"
+            columns: ["draw_offered_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chess_games_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chess_games_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chess_games_white_id_fkey"
+            columns: ["white_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -472,6 +619,7 @@ export type Database = {
       }
       households: {
         Row: {
+          card_reward: number
           cook_name: string
           created_at: string
           daily_reset_time: string
@@ -480,10 +628,12 @@ export type Database = {
           name: string
           poll_lock_dow: number
           poll_lock_time: string
+          poll_reward: number
           starting_balance: number
           timezone: string
         }
         Insert: {
+          card_reward?: number
           cook_name?: string
           created_at?: string
           daily_reset_time?: string
@@ -492,10 +642,12 @@ export type Database = {
           name: string
           poll_lock_dow?: number
           poll_lock_time?: string
+          poll_reward?: number
           starting_balance?: number
           timezone?: string
         }
         Update: {
+          card_reward?: number
           cook_name?: string
           created_at?: string
           daily_reset_time?: string
@@ -504,6 +656,7 @@ export type Database = {
           name?: string
           poll_lock_dow?: number
           poll_lock_time?: string
+          poll_reward?: number
           starting_balance?: number
           timezone?: string
         }
@@ -1230,6 +1383,148 @@ export type Database = {
           },
         ]
       }
+      pet_actions: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          kind: string
+          local_date: string
+          pet_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          kind: string
+          local_date: string
+          pet_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          kind?: string
+          local_date?: string
+          pet_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_actions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pet_actions_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pet_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pet_state: {
+        Row: {
+          happiness: number
+          household_id: string
+          hunger: number
+          pet_id: string
+          updated_at: string
+        }
+        Insert: {
+          happiness?: number
+          household_id: string
+          hunger?: number
+          pet_id: string
+          updated_at?: string
+        }
+        Update: {
+          happiness?: number
+          household_id?: string
+          hunger?: number
+          pet_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_state_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pet_state_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: true
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pets: {
+        Row: {
+          active: boolean
+          bio: string
+          created_at: string
+          created_by: string
+          household_id: string
+          id: string
+          name: string
+          photo_path: string | null
+          species: string
+        }
+        Insert: {
+          active?: boolean
+          bio?: string
+          created_at?: string
+          created_by: string
+          household_id: string
+          id?: string
+          name: string
+          photo_path?: string | null
+          species?: string
+        }
+        Update: {
+          active?: boolean
+          bio?: string
+          created_at?: string
+          created_by?: string
+          household_id?: string
+          id?: string
+          name?: string
+          photo_path?: string | null
+          species?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pets_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pets_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_comments: {
         Row: {
           body: string
@@ -1831,6 +2126,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_add_roommate: {
+        Args: { p_code: string; p_name: string }
+        Returns: string
+      }
+      admin_reset_code: {
+        Args: { p_code: string; p_user: string }
+        Returns: undefined
+      }
+      admin_stats: { Args: never; Returns: Json }
       birthday_reminders_at: { Args: { p_now: string }; Returns: number }
       cancel_market: {
         Args: { p_market: string; p_reason?: string }
@@ -1845,6 +2149,51 @@ export type Database = {
       card_prompt_for: { Args: { d: string; hid: string }; Returns: string }
       card_today: { Args: never; Returns: Json }
       chat_unread: { Args: never; Returns: Json }
+      chess_accept_draw: { Args: { p_game: string }; Returns: Json }
+      chess_apply_move: {
+        Args: {
+          p_fen: string
+          p_game: string
+          p_outcome: string
+          p_pgn: string
+          p_san: string
+          p_secret: string
+        }
+        Returns: Json
+      }
+      chess_cancel: { Args: { p_game: string }; Returns: Json }
+      chess_claim_idle: { Args: { p_game: string }; Returns: Json }
+      chess_create: {
+        Args: { p_buy_in: number; p_color: string }
+        Returns: Json
+      }
+      chess_decline_draw: { Args: { p_game: string }; Returns: Json }
+      chess_finish: {
+        Args: { p_game: string; p_reason: string; p_result: string }
+        Returns: undefined
+      }
+      chess_join: { Args: { p_game: string }; Returns: Json }
+      chess_name: { Args: { u: string }; Returns: string }
+      chess_offer_draw: { Args: { p_game: string }; Returns: Json }
+      chess_refund: {
+        Args: {
+          p_amount: number
+          p_game: string
+          p_hid: string
+          p_user: string
+        }
+        Returns: undefined
+      }
+      chess_resign: { Args: { p_game: string }; Returns: Json }
+      chess_stake: {
+        Args: {
+          p_amount: number
+          p_game: string
+          p_hid: string
+          p_user: string
+        }
+        Returns: undefined
+      }
       claim_daily_reward: { Args: never; Returns: number }
       create_market: {
         Args: {
@@ -1877,8 +2226,10 @@ export type Database = {
         Returns: string
       }
       enqueue_birthdays_reminders: { Args: never; Returns: number }
+      enqueue_errlog_reminders: { Args: never; Returns: number }
       enqueue_location_reminders: { Args: never; Returns: number }
       enqueue_market_reminders: { Args: { p_now?: string }; Returns: number }
+      enqueue_pets_reminders: { Args: never; Returns: number }
       enqueue_reminders: { Args: { p_now?: string }; Returns: number }
       enqueue_reminders_all: { Args: never; Returns: number }
       ensure_wallet: {
@@ -1908,6 +2259,11 @@ export type Database = {
         Args: { p_accuracy: number; p_lat: number; p_lng: number }
         Returns: boolean
       }
+      log_error: {
+        Args: { p_message: string; p_path: string; p_ua?: string }
+        Returns: undefined
+      }
+      login_roster: { Args: never; Returns: Json }
       mark_chat_read: { Args: { p_thread: string }; Returns: undefined }
       memories: {
         Args: { p_household: string; p_limit?: number }
@@ -2036,6 +2392,61 @@ export type Database = {
         Returns: Json
       }
       my_wallet: { Args: never; Returns: number }
+      pets_create: {
+        Args: { p_bio: string; p_name: string; p_species: string }
+        Returns: string
+      }
+      pets_enqueue_reminders_at: { Args: { p_now: string }; Returns: number }
+      pets_feed: { Args: { p_pet: string }; Returns: Json }
+      pets_overview: {
+        Args: { p_all?: boolean; p_pet?: string }
+        Returns: {
+          active: boolean
+          bio: string
+          feeds_left: number
+          happiness: number
+          hunger: number
+          id: string
+          last_fed_at: string
+          last_fed_by: string
+          name: string
+          photo_path: string
+          species: string
+          treats_left: number
+        }[]
+      }
+      pets_recent: {
+        Args: { p_limit?: number; p_pet: string }
+        Returns: {
+          created_at: string
+          display_name: string
+          kind: string
+          user_id: string
+        }[]
+      }
+      pets_state_at: {
+        Args: { p_at?: string; p_pet: string }
+        Returns: {
+          happiness: number
+          hunger: number
+        }[]
+      }
+      pets_status: {
+        Args: { p_extra?: Json; p_pet: string; p_user: string }
+        Returns: Json
+      }
+      pets_treat: { Args: { p_key: string; p_pet: string }; Returns: Json }
+      pets_update: {
+        Args: {
+          p_active: boolean
+          p_bio: string
+          p_name: string
+          p_pet: string
+          p_photo_path: string
+          p_species: string
+        }
+        Returns: undefined
+      }
       pick_card: { Args: { p_pick: string }; Returns: undefined }
       place_bet: {
         Args: {
@@ -2113,6 +2524,10 @@ export type Database = {
       }
       save_subscription: {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
+        Returns: undefined
+      }
+      set_member_role: {
+        Args: { p_role: string; p_user: string }
         Returns: undefined
       }
       set_notification_prefs: {

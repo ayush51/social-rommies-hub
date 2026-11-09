@@ -1,11 +1,18 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { ROOMMATES, type Roommate } from "@/lib/roommates";
+import { useActionState, useEffect, useState } from "react";
+import { FALLBACK_ROSTER } from "@/lib/roommates";
+import { createClient } from "@/lib/supabase/client";
 import { signIn, type LoginState } from "./actions";
 
 export default function LoginPage() {
-  const [name, setName] = useState<Roommate>();
+  const [name, setName] = useState<string>();
+  const [roster, setRoster] = useState<string[]>(FALLBACK_ROSTER);
+  useEffect(() => {
+    createClient().rpc("login_roster").then(({ data }) => {
+      if (Array.isArray(data) && data.length) setRoster(data as string[]);
+    });
+  }, []);
   const [state, action, pending] = useActionState<LoginState, FormData>(signIn, {});
 
   return (
@@ -16,7 +23,7 @@ export default function LoginPage() {
       </div>
       {!name ? (
         <div className="grid grid-cols-2 gap-3">
-          {ROOMMATES.map((n) => (
+          {roster.map((n) => (
             <button
               key={n}
               onClick={() => setName(n)}

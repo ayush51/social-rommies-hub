@@ -3,12 +3,12 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { loginEmail, ROOMMATES } from "@/lib/roommates";
+import { loginEmail } from "@/lib/roommates";
 
 export type LoginState = { error?: string };
 
 const schema = z.object({
-  name: z.enum(ROOMMATES),
+  name: z.string().regex(/^[A-Za-z][A-Za-z0-9]{0,19}$/),
   pin: z.string().regex(/^\d{6}$/),
 });
 

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { ErrorReporter } from "@/components/error-reporter";
 import { NotificationBell } from "@/components/notification-bell";
 import { Presence } from "@/components/presence";
 import { BottomNav } from "@/components/bottom-nav";
@@ -9,6 +10,7 @@ async function MembershipGate({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Presence />
+      <ErrorReporter />
       {children}
     </>
   );

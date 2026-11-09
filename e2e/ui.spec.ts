@@ -19,6 +19,10 @@ const PAGES: [string, string][] = [
   ["/admin", "Admin"],
   ["/admin/features", "Feature requests"],
   ["/admin/questions", "Suggested questions"],
+  ["/admin/roommates", "People"],
+  ["/admin/settings", "Settings"],
+  ["/admin/moderation", "Moderate"],
+  ["/admin/stats", "Stats"],
 ];
 
 function watch(page: Page) {
