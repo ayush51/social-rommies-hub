@@ -1480,6 +1480,64 @@ export type Database = {
         }
         Relationships: []
       }
+      push_events: {
+        Row: {
+          actor: string
+          body: string
+          category: string
+          created_at: string
+          household_id: string
+          id: string
+          notify_user: string | null
+          title: string
+          url: string
+        }
+        Insert: {
+          actor: string
+          body: string
+          category: string
+          created_at?: string
+          household_id: string
+          id?: string
+          notify_user?: string | null
+          title: string
+          url: string
+        }
+        Update: {
+          actor?: string
+          body?: string
+          category?: string
+          created_at?: string
+          household_id?: string
+          id?: string
+          notify_user?: string | null
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_events_actor_fkey"
+            columns: ["actor"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_events_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_events_notify_user_fkey"
+            columns: ["notify_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_log: {
         Row: {
           created_at: string
@@ -1748,8 +1806,21 @@ export type Database = {
         Args: { p_endpoints: string[] }
         Returns: undefined
       }
+      emit_push_event: {
+        Args: {
+          p_actor: string
+          p_body: string
+          p_category: string
+          p_household: string
+          p_title: string
+          p_url: string
+          p_user?: string
+        }
+        Returns: string
+      }
       enqueue_market_reminders: { Args: { p_now?: string }; Returns: number }
       enqueue_reminders: { Args: { p_now?: string }; Returns: number }
+      enqueue_reminders_all: { Args: never; Returns: number }
       ensure_wallet: {
         Args: { p_hid: string; p_user: string }
         Returns: undefined
