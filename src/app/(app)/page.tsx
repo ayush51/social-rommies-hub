@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { SeenAt } from "@/components/relative-time";
+import type { CardToday } from "@/lib/cards";
+import type { ThursdayPoll } from "@/lib/thursday";
 import { signedUrls } from "@/lib/photos";
 import { nowMs } from "@/lib/time";
 import { signOut } from "@/app/(auth)/login/actions";
+import { CardsPanel } from "@/components/cards-panel";
 import { LiveRefresh } from "@/components/live-refresh";
 import { LocalTime } from "@/components/local-time";
 import { RallyPanel } from "@/components/rally-panel";
@@ -31,13 +34,33 @@ export default async function HomePage() {
     .order("starts_at")
     .limit(3);
   const avatars = await signedUrls((members ?? []).map((m) => m.profiles?.avatar_url ?? null), "avatars");
-  const { data: balance } = await supabase.rpc("my_wallet");
+  const { data: card } = await supabase.rpc("card_today");
+  const { data: pollRaw } = await supabase.rpc("thursday_poll");
+  const poll = pollRaw as unknown as ThursdayPoll | null;
+  const { count: posted } = await supabase.from("daily_posts").select("id", { count: "exact", head: true });
 
   return (
     <>
       <LiveRefresh table="statuses" householdId={me.householdId} />
       <h1 className="text-3xl font-bold tracking-tight">{me.householdName}</h1>
       <StatusPanel current={mine?.label} />
+      <Link href="/daily" className="mt-4 flex items-center justify-between rounded-3xl bg-violet-600 px-4 py-4 text-white">
+        <span className="font-semibold">Today&apos;s photos</span>
+        <span>{posted ?? 0} of {members?.length ?? 0} posted</span>
+      </Link>
+      {card && <CardsPanel round={card as unknown as CardToday} />}
+      {poll && (
+        <Link href="/thursday" className="mt-6 flex items-center justify-between gap-3 rounded-3xl bg-neutral-100 px-4 py-4 dark:bg-neutral-900">
+          <span className="font-semibold">Thirsty Thursday</span>
+          <span className="text-right text-sm text-neutral-500">
+            {poll.phase === "open"
+              ? `Vote: what should ${poll.cook_name} cook? ${poll.total_votes}/${poll.members}`
+              : poll.winner
+                ? `${poll.cook_name} is making ${poll.winner.name}`
+                : "Poll opens Tuesday"}
+          </span>
+        </Link>
+      )}
       <RallyPanel />
       <section className="mt-6 rounded-3xl bg-neutral-100 p-4 dark:bg-neutral-900">
         <div className="flex items-baseline justify-between">
@@ -59,10 +82,6 @@ export default async function HomePage() {
           <p className="mt-2 text-sm text-neutral-500">Nothing planned yet.</p>
         )}
       </section>
-      <Link href="/wallet" className="mt-3 flex items-center justify-between rounded-3xl bg-neutral-100 px-4 py-4 dark:bg-neutral-900">
-        <span className="font-semibold">Wallet</span>
-        <span className="tabular-nums">{balance ?? 0} Abby Coins</span>
-      </Link>
       <h2 className="mt-8 font-semibold">Roommates</h2>
       <ul className="mt-2 flex flex-col gap-2">
         {members?.map((m) => {

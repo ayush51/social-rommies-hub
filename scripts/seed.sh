@@ -20,6 +20,9 @@ declare r record; uid uuid; hid uuid := 'a1b2c3d4-0000-4000-8000-000000000001'; 
 begin
   insert into public.households (id, name, timezone) values (hid, 'Abingdon Bros', 'America/New_York')
   on conflict do nothing;
+  insert into public.dishes (household_id, name)
+  select hid, d from unnest(array['Tacos','Chicken tikka masala','Pad thai','Smash burgers','Pasta carbonara','Fried rice','Enchiladas','Ramen']) d
+  on conflict do nothing;
   for r in select * from (values ${rows%,}) v(name, role, pin) loop
     mail := lower(r.name) || '@abingdon.example.com';
     select id into uid from auth.users where email = mail;

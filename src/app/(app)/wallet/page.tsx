@@ -10,6 +10,8 @@ const describe = (kind: string, other?: string | null) =>
     daily: "Daily reward",
     tip_out: `Tip to ${other ?? "a roommate"}`,
     tip_in: `Tip from ${other ?? "a roommate"}`,
+    game: "Daily card vote",
+    poll: "Thirsty Thursday vote",
   })[kind] ?? kind;
 
 export default async function WalletPage() {

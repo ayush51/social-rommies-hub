@@ -44,7 +44,7 @@ The script is idempotent. In the Supabase dashboard, turn **off**
 RLS tests run against the linked database inside a block that always rolls back:
 
 ```bash
-for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push; do supabase db query --linked -f supabase/tests/$f.sql; done
+for f in rls rls_chat rls_daily rls_economy rls_plans rls_profile rls_push rls_cards rls_thursday; do supabase db query --linked -f supabase/tests/$f.sql; done
 ```
 
 Passing looks like an error whose message is `ALL RLS TESTS PASSED (rolled back)`.

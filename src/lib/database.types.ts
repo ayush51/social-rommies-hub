@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      card_picks: {
+        Row: {
+          household_id: string
+          local_date: string
+          pick_id: string
+          picked_at: string
+          voter_id: string
+        }
+        Insert: {
+          household_id: string
+          local_date: string
+          pick_id: string
+          picked_at?: string
+          voter_id: string
+        }
+        Update: {
+          household_id?: string
+          local_date?: string
+          pick_id?: string
+          picked_at?: string
+          voter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_picks_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_picks_pick_id_fkey"
+            columns: ["pick_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "card_picks_voter_id_fkey"
+            columns: ["voter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_prompts: {
+        Row: {
+          id: number
+          text: string
+        }
+        Insert: {
+          id?: never
+          text: string
+        }
+        Update: {
+          id?: never
+          text?: string
+        }
+        Relationships: []
+      }
+      card_results: {
+        Row: {
+          household_id: string
+          local_date: string
+          settled_at: string
+          winner_ids: string[]
+        }
+        Insert: {
+          household_id: string
+          local_date: string
+          settled_at?: string
+          winner_ids?: string[]
+        }
+        Update: {
+          household_id?: string
+          local_date?: string
+          settled_at?: string
+          winner_ids?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_results_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_posts: {
         Row: {
           caption: string | null
@@ -62,6 +152,38 @@ export type Database = {
           },
         ]
       }
+      dishes: {
+        Row: {
+          active: boolean
+          created_at: string
+          household_id: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          household_id: string
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          household_id?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dishes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_members: {
         Row: {
           household_id: string
@@ -100,29 +222,38 @@ export type Database = {
       }
       households: {
         Row: {
+          cook_name: string
           created_at: string
           daily_reset_time: string
           daily_reward: number
           id: string
           name: string
+          poll_lock_dow: number
+          poll_lock_time: string
           starting_balance: number
           timezone: string
         }
         Insert: {
+          cook_name?: string
           created_at?: string
           daily_reset_time?: string
           daily_reward?: number
           id?: string
           name: string
+          poll_lock_dow?: number
+          poll_lock_time?: string
           starting_balance?: number
           timezone?: string
         }
         Update: {
+          cook_name?: string
           created_at?: string
           daily_reset_time?: string
           daily_reward?: number
           id?: string
           name?: string
+          poll_lock_dow?: number
+          poll_lock_time?: string
           starting_balance?: number
           timezone?: string
         }
@@ -465,6 +596,52 @@ export type Database = {
           },
         ]
       }
+      poll_votes: {
+        Row: {
+          dish_id: string
+          household_id: string
+          user_id: string
+          voted_at: string
+          week_start: string
+        }
+        Insert: {
+          dish_id: string
+          household_id: string
+          user_id: string
+          voted_at?: string
+          week_start: string
+        }
+        Update: {
+          dish_id?: string
+          household_id?: string
+          user_id?: string
+          voted_at?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_dish_id_fkey"
+            columns: ["dish_id"]
+            isOneToOne: false
+            referencedRelation: "dishes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           body: string
@@ -730,6 +907,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      card_history: { Args: { p_limit?: number }; Returns: Json }
+      card_prompt_for: { Args: { d: string; hid: string }; Returns: string }
+      card_today: { Args: never; Returns: Json }
       claim_daily_reward: { Args: never; Returns: number }
       create_household: {
         Args: { p_name: string; p_timezone?: string }
@@ -738,6 +918,10 @@ export type Database = {
       create_invite: {
         Args: { p_household: string; p_max_uses?: number }
         Returns: string
+      }
+      do_vote: {
+        Args: { p_dish: string; p_now: string; p_user: string }
+        Returns: undefined
       }
       drop_subscriptions: {
         Args: { p_endpoints: string[] }
@@ -770,6 +954,20 @@ export type Database = {
         }
       }
       my_wallet: { Args: never; Returns: number }
+      pick_card: { Args: { p_pick: string }; Returns: undefined }
+      poll_state: { Args: { p_now: string; p_user: string }; Returns: Json }
+      poll_window: {
+        Args: { hid: string; p_now: string }
+        Returns: {
+          cook_day: string
+          cook_name: string
+          lock_at: string
+          lock_dow: number
+          lock_time: string
+          phase: string
+          week_start: string
+        }[]
+      }
       post_ledger: {
         Args: {
           p_amount: number
@@ -798,11 +996,14 @@ export type Database = {
         Args: { p_auth: string; p_endpoint: string; p_p256dh: string }
         Returns: undefined
       }
+      settle_cards: { Args: { p_hid: string }; Returns: undefined }
+      thursday_poll: { Args: never; Returns: Json }
       tip_post: {
         Args: { p_amount: number; p_key: string; p_post: string }
         Returns: undefined
       }
       touch_last_seen: { Args: never; Returns: undefined }
+      vote_dish: { Args: { p_dish: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
