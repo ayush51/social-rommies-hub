@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Crown, Star } from "lucide-react";
+import { Crown, Star, Trophy } from "lucide-react";
 import { Suspense } from "react";
 import { ChessSummary } from "@/components/chess-summary";
 import { PetsSummary } from "@/components/pets-summary";
+import { ranked, type LeaderRow } from "@/lib/leaderboard";
 import { Avatar } from "@/components/avatar";
 import { SeenAt } from "@/components/relative-time";
 import { PastQuestions } from "@/components/past-questions";
@@ -35,6 +36,7 @@ export default async function HomePage() {
     { count: openMarkets },
     { count: posted },
     { data: feedRaw },
+    { data: boardRaw },
   ] = await Promise.all([
     supabase.from("household_members").select("user_id, profiles(display_name, nickname, avatar_url, last_seen_at, dob, badge, spotlight_until)"),
     supabase.from("statuses").select("user_id, kind, label, expires_at").or(`expires_at.is.null,expires_at.gt.${nowIso}`),
@@ -51,7 +53,10 @@ export default async function HomePage() {
     supabase.from("markets").select("id", { count: "exact", head: true }).eq("status", "open"),
     supabase.from("daily_posts").select("id", { count: "exact", head: true }),
     supabase.rpc("activity_feed", { p_limit: 8 }),
+    supabase.rpc("bingdon_leaderboard"),
   ]);
+  const board = ranked((boardRaw ?? []) as unknown as LeaderRow[]);
+  const myRow = board.find((r) => r.user_id === me.userId);
   const feed = (feedRaw ?? []) as unknown as { at: string; text: string; url: string }[];
   const spotlight = (members ?? []).filter((m) => m.profiles?.spotlight_until && new Date(m.profiles.spotlight_until).getTime() > nowMs());
   const byUser = new Map(statuses?.map((s) => [s.user_id, s]));
@@ -107,6 +112,10 @@ export default async function HomePage() {
         <span className="text-sm text-neutral-500">{openMarkets ? `${openMarkets} open` : "Start one"}</span>
       </Link>
       <div className="mt-3 space-y-3">
+        <Link href="/leaderboard" className="flex min-h-11 items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
+          <span className="flex items-center gap-2 font-semibold"><Trophy size={18} className="text-amber-500" aria-hidden /> Leaderboard</span>
+          <span className="text-sm text-neutral-500">{myRow ? `You're #${myRow.rank} of ${board.length} · ${myRow.balance}` : "See the standings"}</span>
+        </Link>
         <Suspense fallback={null}><PetsSummary /></Suspense>
         <Suspense fallback={null}><ChessSummary /></Suspense>
       </div>

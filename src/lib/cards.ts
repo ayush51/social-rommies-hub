@@ -4,6 +4,7 @@ export type CardToday = {
   suggested_by: string | null;
   voted: boolean;
   my_pick: string | null;
+  me: string;
   members: number;
   voted_count: number;
   options: { id: string; name: string; votes: number | null }[];

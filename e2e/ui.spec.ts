@@ -11,6 +11,7 @@ const PAGES: [string, string][] = [
   ["/games/monopoly", "Abingdon Street"],
   ["/chat", "Chat"],
   ["/wallet", "Wallet"],
+  ["/leaderboard", "Leaderboard"],
   ["/predictions", "Predictions"],
   ["/predictions/new", "New prediction"],
   ["/thursday", "Thirsty Thursday"],

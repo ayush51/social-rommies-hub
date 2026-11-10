@@ -18,9 +18,11 @@ begin
   if (j->>'voted')::boolean then raise exception 'FAIL: voted flag before voting'; end if;
   perform public.pick_card(b);
   perform public.pick_card(e);   -- change of mind
-  perform public.pick_card(a);   -- picking yourself is allowed
+  denied := false; begin perform public.pick_card(a); exception when others then denied := true; end;
+  if not denied then raise exception 'FAIL: picked yourself'; end if;
   j := public.card_today();
-  if not (j->>'voted')::boolean or (j->>'my_pick') <> a::text then raise exception 'FAIL: my_pick not recorded'; end if;
+  if (j->>'me') <> a::text then raise exception 'FAIL: card_today should return me'; end if;
+  if not (j->>'voted')::boolean or (j->>'my_pick') <> e::text then raise exception 'FAIL: my_pick not recorded'; end if;
   if (select sum((o->>'votes')::int) from jsonb_array_elements(j->'options') o) <> 1 then raise exception 'FAIL: one voter should count once'; end if;
   denied := false; begin perform public.pick_card(c); exception when others then denied := true; end;
   if not denied then raise exception 'FAIL: picked someone from another household'; end if;
@@ -40,7 +42,7 @@ begin
   if (j->>'voted_count')::int <> 1 then raise exception 'FAIL: voted_count should be 1'; end if;
   perform public.pick_card(e);
   j := public.card_today();
-  if (select (o->>'votes')::int from jsonb_array_elements(j->'options') o where o->>'id' = e::text) <> 1 then raise exception 'FAIL: tally for E'; end if;
+  if (select (o->>'votes')::int from jsonb_array_elements(j->'options') o where o->>'id' = e::text) <> 2 then raise exception 'FAIL: tally for E (A and B)'; end if;
   reset role;
 
   -- outsider C is isolated

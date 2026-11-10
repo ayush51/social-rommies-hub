@@ -21,10 +21,12 @@ export function CardsPanel({ round }: { round: CardToday }) {
       <div className="mt-4 grid grid-cols-2 gap-2">
         {round.options.map((o) => {
           const mine = round.my_pick === o.id;
+          const self = round.me === o.id;
           return (
             <button
               key={o.id}
-              disabled={pending}
+              disabled={pending || self}
+              aria-label={self ? `${o.name} (you can't pick yourself)` : undefined}
               onClick={() =>
                 start(async () => {
                   const { error } = await createClient().rpc("pick_card", { p_pick: o.id });
@@ -34,7 +36,7 @@ export function CardsPanel({ round }: { round: CardToday }) {
               }
               className={`relative overflow-hidden rounded-2xl px-4 py-3 text-left text-sm font-semibold active:scale-95 ${
                 mine ? "ring-2 ring-violet-400" : ""
-              } bg-white/10`}
+              } ${self ? "opacity-40" : ""} bg-white/10`}
             >
               {round.voted && (
                 <span className="absolute inset-y-0 left-0 bg-violet-500/50" style={{ width: `${((o.votes ?? 0) / top) * 100}%` }} />

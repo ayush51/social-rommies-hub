@@ -1,4 +1,5 @@
-import { Coins } from "lucide-react";
+import Link from "next/link";
+import { Coins, Trophy } from "lucide-react";
 import { ClaimButton } from "@/components/claim-button";
 import { LiveRefresh } from "@/components/live-refresh";
 import { ShopItem } from "@/components/shop-item";
@@ -23,12 +24,11 @@ export default async function WalletPage() {
   const me = await getMe();
   const supabase = await createClient();
   const { data: balance } = await supabase.rpc("my_wallet"); // creates the wallet + welcome bonus on first visit
-  const [{ data: items }, { data: mine }, { data: passes }, { data: history }, { data: board }, { data: members }] = await Promise.all([
+  const [{ data: items }, { data: mine }, { data: passes }, { data: history }, { data: members }] = await Promise.all([
     supabase.from("shop_items").select("code, name, description, price").order("sort"),
     supabase.from("profiles").select("badge").eq("id", me.userId).single(),
     supabase.from("shop_purchases").select("id").eq("item_code", "question_pass").is("used_at", null),
     supabase.from("ledger_entries").select("id, amount, kind, created_at, counterparty").order("id", { ascending: false }).limit(50),
-    supabase.from("wallets").select("user_id, balance").order("balance", { ascending: false }),
     supabase.from("household_members").select("user_id, profiles(display_name)"),
   ]);
   const names = Object.fromEntries((members ?? []).map((m) => [m.user_id, m.profiles?.display_name ?? ""]));
@@ -59,15 +59,10 @@ export default async function WalletPage() {
         ))}
       </ul>
 
-      <h2 className="mt-8 font-semibold">Leaderboard</h2>
-      <ol className="mt-2 space-y-1">
-        {board?.map((w, i) => (
-          <li key={w.user_id} className="flex justify-between rounded-2xl bg-neutral-100 px-4 py-2 dark:bg-neutral-900">
-            <span><span className="mr-2 text-neutral-500">{i + 1}</span>{names[w.user_id]}</span>
-            <span className="tabular-nums">{w.balance}</span>
-          </li>
-        ))}
-      </ol>
+      <Link href="/leaderboard" className="mt-8 flex min-h-11 items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
+        <span className="flex items-center gap-2 font-semibold"><Trophy size={18} className="text-amber-500" aria-hidden /> Leaderboard</span>
+        <span className="text-sm text-neutral-500">See who has the most</span>
+      </Link>
 
       <h2 className="mt-8 font-semibold">History</h2>
       <ul className="mt-2 space-y-1 text-sm">

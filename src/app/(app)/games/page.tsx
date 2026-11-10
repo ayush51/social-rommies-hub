@@ -23,6 +23,10 @@ export default async function GamesPage() {
         <span className="text-lg font-bold tabular-nums">I have {balance ?? 0} {balance === 1 ? "bingdon" : "bingdons"}</span>
       </Link>
 
+      <Link href="/leaderboard" className="mt-3 flex min-h-11 items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
+        <span className="font-semibold">Leaderboard</span>
+        <span className="text-sm text-neutral-500">Who has the most bingdons</span>
+      </Link>
       <Link href="/games/monopoly" className="mt-3 flex min-h-11 items-center justify-between rounded-3xl bg-neutral-100 px-5 py-4 dark:bg-neutral-900">
         <span className="font-semibold">Abingdon Street</span>
         <span className="text-sm text-neutral-500">Monopoly with a bingdon pot</span>

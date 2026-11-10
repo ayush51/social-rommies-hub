@@ -2215,6 +2215,7 @@ export type Database = {
         Returns: undefined
       }
       admin_stats: { Args: never; Returns: Json }
+      bingdon_leaderboard: { Args: never; Returns: Json }
       birthday_reminders_at: { Args: { p_now: string }; Returns: number }
       cancel_market: {
         Args: { p_market: string; p_reason?: string }
