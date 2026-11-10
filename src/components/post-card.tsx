@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Coins, Send, Trash2 } from "lucide-react";
+import { notifyComment } from "@/lib/notify-comment";
 import { createClient } from "@/lib/supabase/client";
 
 export type PostView = {
@@ -56,7 +57,8 @@ export function PostCard({ post, householdId, userId, isAdmin, names }: Props) {
     const body = draft.trim();
     if (!body) return;
     setDraft("");
-    await supabase.from("post_comments").insert({ post_id: post.id, user_id: userId, household_id: householdId, body });
+    const { data } = await supabase.from("post_comments").insert({ post_id: post.id, user_id: userId, household_id: householdId, body }).select("id").single();
+    if (data) void notifyComment("post", data.id);
     router.refresh();
   }
 

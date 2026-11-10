@@ -3,17 +3,19 @@ import { Suspense } from "react";
 import { ChessSummary } from "@/components/chess-summary";
 import { Coins } from "lucide-react";
 import type { CardHistory } from "@/lib/cards";
+import { LiveRefresh } from "@/components/live-refresh";
 import { getMe } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function GamesPage() {
-  await getMe();
+  const me = await getMe();
   const supabase = await createClient();
   const [{ data: balance }, { data: raw }] = await Promise.all([supabase.rpc("my_wallet"), supabase.rpc("card_history", { p_limit: 7 })]);
   const history = raw as unknown as CardHistory | null;
 
   return (
     <>
+      <LiveRefresh table="wallets" householdId={me.householdId} />
       <h1 className="text-3xl font-bold tracking-tight">Games</h1>
 
       <Link href="/wallet" className="mt-4 flex items-center justify-between rounded-3xl bg-violet-600 px-5 py-4 text-white">

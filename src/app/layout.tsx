@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Abingdon Bros",
+  title: "The Couch",
   description: "Our private living room.",
-  appleWebApp: { capable: true, title: "Abingdon", statusBarStyle: "default" },
-  icons: { apple: "/icons/180" },
+  appleWebApp: { capable: true, title: "The Couch", statusBarStyle: "default" },
+  icons: { icon: "/icons/192", apple: "/icons/180" },
 };
 
 // runs before first paint so there is no light flash for dark-mode users

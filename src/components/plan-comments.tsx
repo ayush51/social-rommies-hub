@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, Trash2 } from "lucide-react";
+import { notifyComment } from "@/lib/notify-comment";
 import { createClient } from "@/lib/supabase/client";
 
 type C = { id: string; user_id: string; body: string };
@@ -18,8 +19,9 @@ export function PlanComments({ planId, householdId, userId, isAdmin, names, comm
     const body = draft.trim();
     if (!body) return;
     setDraft("");
-    const { error } = await createClient().from("plan_comments").insert({ plan_id: planId, user_id: userId, household_id: householdId, body });
+    const { data, error } = await createClient().from("plan_comments").insert({ plan_id: planId, user_id: userId, household_id: householdId, body }).select("id").single();
     setError(error ? (error.message === "slow down" ? "Slow down a little." : "Comment failed.") : undefined);
+    if (data) void notifyComment("plan", data.id);
     router.refresh();
   }
 

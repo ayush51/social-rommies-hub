@@ -10,7 +10,7 @@ export type PromptRequest = {
   comments: { author: string; body: string }[];
 };
 
-const CONTEXT = `You are working in the Abingdon Bros repo: a private PWA for six roommates (Next.js 16 App Router, TypeScript, Tailwind, Supabase Postgres/Auth/Realtime/Storage, deployed on Vercel). The in-app currency is "bingdons".
+const CONTEXT = `You are working in The Couch repo: a private PWA for six roommates (Next.js 16 App Router, TypeScript, Tailwind, Supabase Postgres/Auth/Realtime/Storage, deployed on Vercel). The in-app currency is "bingdons".
 
 Before you write code:
 - Read AGENTS.md and the relevant guide in node_modules/next/dist/docs/ (this Next.js has breaking changes; proxy.ts replaces middleware, Cache Components need <Suspense> around cookies()/dynamic data).

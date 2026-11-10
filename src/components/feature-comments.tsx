@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, Trash2 } from "lucide-react";
+import { notifyComment } from "@/lib/notify-comment";
 import { createClient } from "@/lib/supabase/client";
 
 type Props = {
@@ -24,8 +25,9 @@ export function FeatureComments({ requestId, householdId, userId, isAdmin, names
     const body = draft.trim();
     if (!body) return;
     setDraft("");
-    const { error } = await createClient().from("feature_comments").insert({ request_id: requestId, user_id: userId, household_id: householdId, body });
+    const { data, error } = await createClient().from("feature_comments").insert({ request_id: requestId, user_id: userId, household_id: householdId, body }).select("id").single();
     setError(error ? "Comment failed." : undefined);
+    if (data) void notifyComment("feature", data.id);
     router.refresh();
   }
 

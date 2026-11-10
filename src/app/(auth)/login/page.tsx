@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { CouchMark } from "@/components/couch-logo";
 import { FALLBACK_ROSTER } from "@/lib/roommates";
 import { createClient } from "@/lib/supabase/client";
 import { signIn, type LoginState } from "./actions";
@@ -18,7 +19,8 @@ export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-4">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight">Abingdon Bros</h1>
+        <CouchMark size={72} />
+        <h1 className="mt-4 text-4xl font-bold tracking-tight">The Couch</h1>
         <p className="mt-1 text-neutral-500">Who&apos;s home?</p>
       </div>
       {!name ? (

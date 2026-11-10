@@ -1,4 +1,4 @@
-# Abingdon Bros
+# The Couch
 
 Private PWA for one household of roommates. See [ARCHITECTURE.md](ARCHITECTURE.md) and [TASKS.md](TASKS.md).
 

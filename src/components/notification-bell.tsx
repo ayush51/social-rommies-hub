@@ -93,7 +93,7 @@ export function NotificationBell() {
             </>
           )}
           {state === "install" && (
-            <p className="mt-1 text-neutral-500">On iPhone, tap Share, then Add to Home Screen, and open Abingdon Bros from your Home Screen. Then come back to this bell.</p>
+            <p className="mt-1 text-neutral-500">On iPhone, tap Share, then Add to Home Screen, and open The Couch from your Home Screen. Then come back to this bell.</p>
           )}
           {state === "denied" && <p className="mt-1 text-neutral-500">Notifications are blocked. Allow them for this app in your phone&apos;s Settings.</p>}
           {state === "unsupported" && <p className="mt-1 text-neutral-500">This browser doesn&apos;t support notifications.</p>}

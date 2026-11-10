@@ -20,7 +20,7 @@ test("cached chat never hides a message that arrived while you were away @statef
     await page.locator(`a[href="/chat/dm/${tylerId}"]`).click();        // first visit caches the DM thread
     await expect(page.getByRole("heading", { name: "Tyler" })).toBeVisible();
     await nav("Home").click();
-    await expect(page.getByRole("heading", { name: "Abingdon Bros" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The Couch" })).toBeVisible();
     const { error } = await t.from("messages").insert({ household_id: hid, user_id: tylerId, recipient_id: ayushId, body: marker });
     expect(error).toBeNull();
     await nav("Chat").click();

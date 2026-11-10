@@ -1,4 +1,4 @@
-# Abingdon Bros — Tasks
+# The Couch — Tasks
 
 Each phase is independently testable and ships only the tables it needs. `[x]` done, `[ ]` not started.
 
@@ -28,6 +28,9 @@ Each phase is independently testable and ships only the tables it needs. `[x]` d
 - [x] **Home activity feed** — "Around the house" (no DMs, no amounts)
 - [x] **Admin dashboard** — people (roles, add roommate, reset code), settings (timezone, reset time, reward amounts), moderation, stats + error log
 - [x] **Polish** — unread badges, edit messages, delete own photo, light/dark/system theme, notification settings + quiet hours, change your own login code, birthday reminders
+- [x] **Renamed to The Couch** with a couch app icon (Home Screen), maskable icon for Android
+- [x] **Near-instant tab switching** — tab pages fully prefetched and cached 5 min (31-64 ms switches), quiet revalidation on arrival, chat re-syncs on open
+- [x] **Push for everything** — messages, photos, comments (photos, plans, feature ideas), plans, predictions, Monopoly and chess games; failures land in the admin error log
 - [x] **Rally** — separate Home section, posts "who's in?" to chat
 
 ## Pending features (from the original spec)

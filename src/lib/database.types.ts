@@ -2472,6 +2472,10 @@ export type Database = {
         Returns: Json
       }
       my_wallet: { Args: never; Returns: number }
+      notify_comment: {
+        Args: { p_id: string; p_kind: string }
+        Returns: string
+      }
       pets_create: {
         Args: { p_bio: string; p_name: string; p_species: string }
         Returns: string

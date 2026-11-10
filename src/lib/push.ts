@@ -32,5 +32,10 @@ export async function sendPush(kind: PushKind, ref: string): Promise<number> {
     })
     .map((t) => t.endpoint);
   if (dead.length) await supabase.rpc("drop_subscriptions", { p_endpoints: dead });
+  const broken = results.filter((r, i) => r.status === "rejected" && !dead.includes(targets[i].endpoint));
+  if (broken.length) {
+    const codes = broken.map((r) => String((r as PromiseRejectedResult).reason?.statusCode ?? (r as PromiseRejectedResult).reason?.code ?? "error"));
+    await supabase.rpc("log_error", { p_path: `push:${kind}`, p_message: `push failed for ${broken.length} of ${targets.length} devices (${[...new Set(codes)].join(", ")})` });
+  }
   return results.filter((r) => r.status === "fulfilled").length;
 }

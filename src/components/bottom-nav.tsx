@@ -23,6 +23,7 @@ function PendingBar() {
 export function BottomNav() {
   const pathname = usePathname();
   const unread = useUnread();
+
   // instant feedback: the tapped tab lights up at once; the entry is ignored as soon as the path changes
   const [tapped, setTapped] = useState<{ href: string; from: string }>();
   const current = tapped && tapped.from === pathname ? tapped.href : pathname;
@@ -35,6 +36,7 @@ export function BottomNav() {
             <li key={href} className="flex-1">
               <Link
                 href={href}
+                prefetch
                 onPointerDown={() => setTapped({ href, from: pathname })}
                 className={`flex min-h-16 flex-col items-center justify-center gap-1 pt-1 text-xs font-medium active:bg-neutral-100 dark:active:bg-neutral-900 ${
                   active ? "text-violet-600 dark:text-violet-400" : "text-neutral-500"

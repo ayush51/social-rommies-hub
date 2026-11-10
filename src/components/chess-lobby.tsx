@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { notify } from "@/app/(app)/push-actions";
 import { createClient } from "@/lib/supabase/client";
 
 const COLORS = [["random", "Random"], ["white", "White"], ["black", "Black"]] as const;
@@ -34,7 +35,9 @@ export function ChessCreateForm() {
           start(async () => {
             const { data, error } = await createClient().rpc("chess_create", { p_buy_in: buyIn, p_color: color });
             if (error) return setError(error.message.includes("enough") ? "You don't have enough bingdons for that buy-in." : error.message.includes("already") ? "You already have an open lobby." : "Couldn't open the game.");
-            router.push(`/games/chess/${(data as { game: string }).game}`);
+            const r = data as { game: string; event?: string };
+            if (r.event) void notify("event", r.event);
+            router.push(`/games/chess/${r.game}`);
           })
         }
         className="mt-3 min-h-11 w-full rounded-2xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white active:scale-95 disabled:opacity-50"

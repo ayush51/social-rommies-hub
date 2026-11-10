@@ -55,6 +55,7 @@ test("pets: admin adds a pet, a member feeds it, daily cap, cleanup @stateful", 
     let problems = watch(page);
     await page.goto("/admin/pets");
     await expect(page.getByRole("heading", { name: "Pets", exact: true })).toBeVisible({ timeout: 15_000 });
+    await page.waitForLoadState("networkidle"); // typing before the page has started up gets wiped when it hydrates
     const add = page.getByRole("form", { name: "Add a pet" });
     await add.getByLabel("Name").fill(name);
     await add.getByLabel("Species").fill("test goldfish");
@@ -68,6 +69,7 @@ test("pets: admin adds a pet, a member feeds it, daily cap, cleanup @stateful", 
     await check(page, "admin", project, problems);
 
     // a member feeds it
+    await page.goto("about:blank"); // leave the page first: its background refresh would otherwise fire with no session and reload
     await context.clearCookies();
     await signInAs(context, "tyler");
     problems = watch(page);
@@ -96,6 +98,7 @@ test("pets: admin adds a pet, a member feeds it, daily cap, cleanup @stateful", 
     await check(page, "profile", project, problems);
 
     // admin deactivates: it leaves the member list
+    await page.goto("about:blank"); // leave the page first: its background refresh would otherwise fire with no session and reload
     await context.clearCookies();
     await signInAs(context, "ayush");
     await page.goto("/admin/pets");

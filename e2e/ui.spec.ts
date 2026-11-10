@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { audit, BASE, CODES, record, signInAs, timings, userIdOf } from "./helpers";
 
 const PAGES: [string, string][] = [
-  ["/", "Abingdon Bros"],
+  ["/", "The Couch"],
   ["/daily", "Daily"],
   ["/daily/memories", "Memories"],
   ["/plans", "Plans"],
@@ -70,10 +70,10 @@ test.describe("pages", () => {
 test("bottom nav: every tab opens, fast", async ({ page, context }, info) => {
   await signInAs(context, "ayush");
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Abingdon Bros" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Couch" })).toBeVisible();
   await page.waitForLoadState("networkidle"); // a person can't tap before the page has painted and started up
   const results: Record<string, number> = {};
-  for (const [label, heading] of [["Daily", "Daily"], ["Plans", "Plans"], ["Games", "Games"], ["Chat", "Chat"], ["Home", "Abingdon Bros"]] as const) {
+  for (const [label, heading] of [["Daily", "Daily"], ["Plans", "Plans"], ["Games", "Games"], ["Chat", "Chat"], ["Home", "The Couch"]] as const) {
     const nav = page.getByRole("navigation").getByRole("link", { name: label, exact: true });
     await expect(nav).toBeVisible();
     const box = await nav.boundingBox();
@@ -89,7 +89,7 @@ test("bottom nav: every tab opens, fast", async ({ page, context }, info) => {
 
 test("login form: name tiles, 6-digit limit, wrong code, right code", async ({ page }, info) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "Abingdon Bros" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Couch" })).toBeVisible();
   const tiles = page.getByRole("button").filter({ hasText: /^(Jay|Micah|Tyler|Ayush|Jesse|Kelly)$/ });
   await expect(tiles).toHaveCount(6);
   for (const b of await tiles.all()) expect((await b.boundingBox())!.height).toBeGreaterThanOrEqual(44);
@@ -106,7 +106,7 @@ test("login form: name tiles, 6-digit limit, wrong code, right code", async ({ p
   const t0 = Date.now();
   await page.getByRole("button", { name: "Let me in" }).click();
   await page.waitForURL(BASE + "/", { timeout: 15_000 });
-  await expect(page.getByRole("heading", { name: "Abingdon Bros" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Couch" })).toBeVisible();
   record(info.project.name, { kind: "login", loginMs: Date.now() - t0 });
 });
 
@@ -209,7 +209,7 @@ test("rotate: portrait to landscape and back keeps the layout intact", async ({ 
   test.skip(!info.project.name.startsWith("iphone-portrait"), "orientation flip is exercised from the portrait phone project");
   await signInAs(context, "ayush");
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Abingdon Bros" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Couch" })).toBeVisible();
   for (const size of [{ width: 844, height: 390 }, { width: 390, height: 844 }, { width: 667, height: 375 }, { width: 375, height: 667 }]) {
     await page.setViewportSize(size);
     await page.waitForTimeout(300);

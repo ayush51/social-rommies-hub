@@ -153,7 +153,7 @@ export function LocationPanel({ me, others }: { me: Share | null; others: Sharer
           </>
         )}
       </section>
-      <p className="mt-3 text-xs text-neutral-500">Your location only updates while Abingdon Bros is open. iPhone web apps can&apos;t track you in the background.</p>
+      <p className="mt-3 text-xs text-neutral-500">Your location only updates while The Couch is open. iPhone web apps can&apos;t track you in the background.</p>
 
       <h2 className="mt-8 font-semibold">Sharing with you</h2>
       <ul className="mt-2 space-y-2">

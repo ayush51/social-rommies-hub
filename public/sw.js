@@ -1,7 +1,7 @@
 self.addEventListener("push", (event) => {
   const data = event.data ? event.data.json() : {};
   event.waitUntil(
-    self.registration.showNotification(data.title || "Abingdon Bros", {
+    self.registration.showNotification(data.title || "The Couch", {
       body: data.body || "",
       icon: "/icons/192",
       data: { url: data.url || "/" },

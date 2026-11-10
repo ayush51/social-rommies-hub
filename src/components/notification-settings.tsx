@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const CATEGORIES = [
-  ["chat", "Group chat"], ["dm", "Direct messages"], ["plans", "Plans"], ["photos", "Daily photos"], ["rally", "Rallies"],
+  ["chat", "Group chat"], ["dm", "Direct messages"], ["comments", "Comments"], ["plans", "Plans"], ["photos", "Daily photos"], ["rally", "Rallies"],
   ["markets", "Predictions"], ["games", "Games"], ["thursday", "Thirsty Thursday"], ["birthdays", "Birthdays"], ["pets", "Pets"], ["chess", "Chess"], ["other", "Everything else"],
 ] as const;
 
