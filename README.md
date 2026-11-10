@@ -4,6 +4,18 @@ Private PWA for one household of roommates. See [ARCHITECTURE.md](ARCHITECTURE.m
 
 Stack: Next.js 16 (App Router) · Tailwind · Supabase (Postgres, Auth, RLS) · Vercel.
 
+## Screenshots
+
+Demo data (fictional roommates).
+
+| Home | Daily photos | Plans | Chat |
+|---|---|---|---|
+| <img src="docs/screenshots/home.png" width="180" alt="Home"> | <img src="docs/screenshots/daily.png" width="180" alt="Daily photos"> | <img src="docs/screenshots/plans.png" width="180" alt="Plans"> | <img src="docs/screenshots/chat.png" width="180" alt="Chat"> |
+
+| Bingdon leaderboard | Pets | Predictions | Abingdon Street |
+|---|---|---|---|
+| <img src="docs/screenshots/leaderboard.png" width="180" alt="Bingdon leaderboard"> | <img src="docs/screenshots/pets.png" width="180" alt="Pets"> | <img src="docs/screenshots/predictions.png" width="180" alt="Predictions"> | <img src="docs/screenshots/abingdon-street.png" width="180" alt="Abingdon Street"> |
+
 ## Setup
 
 ```bash
